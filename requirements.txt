@@ -1,0 +1,12 @@
+# Core
+streamlit==1.40.2
+pandas==2.2.3
+numpy==2.1.3
+requests==2.32.3
+altair==5.5.0
+
+# Optional extras (kept for future use / local parity)
+plotly==5.24.1
+reportlab==4.2.5
+bcrypt==4.2.1
+matplotlib==3.9.3
