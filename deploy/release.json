@@ -1,0 +1,26 @@
+{
+  "date": "2026-10-30",
+  "url": "https://greenmineapp.ir",
+  "runtime_code_commit": "16794d8c8d3de8bf90f43609d05d22a89ce249ae",
+  "image": "greenmine:16794d8",
+  "image_id": "sha256:b2b88c7f7a2b56bb46f49b76af905c731bb2259afd056bfc30fa73cf5d7f325b",
+  "backend_tests_passed": 29,
+  "production_build": "passed_on_vps",
+  "public_browser": [
+    "signup",
+    "logout_relogin",
+    "saved_settings",
+    "csv_history_persistence",
+    "both_csv_imports",
+    "calibrated_forecast",
+    "30_forecast_bars_visible",
+    "61_history_bars_visible"
+  ],
+  "csv_days": 61,
+  "csv_total_kwh": 3930.115,
+  "sample_config_forecast_kwh": 778.597,
+  "accuracy_validated": false,
+  "temporary_qa_accounts_removed": true,
+  "tokenization": "deferred",
+  "android_release_acceptance": "unverified"
+}

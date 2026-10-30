@@ -1,0 +1,7 @@
+Production live: https://greenmineapp.ir
+SSH: ssh greenmine (62.60.194.99:30222).
+Runtime: greenmine:16794d8, source 16794d8c8d3de8bf90f43609d05d22a89ce249ae.
+Container greenmine-app, private bind 127.0.0.1:3001, named volume greenmine_accounts:/data.
+Proxy greenmine-edge serves HTTPS and www redirect; config /opt/greenmine/edge/Caddyfile.
+29 tests and build passed on VPS. Public signup/logout/relogin, saved settings, CSV imports and calibrated forecast passed.
+See ../PRODUCTION.md before upgrading. Fresh-install Compose is not the running VPS topology.
