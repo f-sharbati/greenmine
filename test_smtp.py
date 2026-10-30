@@ -1,12 +1,17 @@
+"""Explicit operator-only SMTP authentication check; sends no messages."""
+import os
 import smtplib
+import ssl
 
-EMAIL = "mehrava.sharbati@gmail.com"
-APP_PW = "qftphixezkxbrzmn".replace(" ", "").strip()
+def main():
+    host = os.environ['SMTP_HOST']
+    port = int(os.environ.get('SMTP_PORT', '587'))
+    with smtplib.SMTP(host, port, timeout=15) as smtp:
+        smtp.ehlo()
+        smtp.starttls(context=ssl.create_default_context())
+        smtp.ehlo()
+        smtp.login(os.environ['SMTP_USER'], os.environ['SMTP_PASSWORD'])
+    print('SMTP authentication passed; no messages sent')
 
-print("len =", len(APP_PW))   # 16
-
-s = smtplib.SMTP("smtp.gmail.com", 587)
-s.starttls()
-s.login(EMAIL, APP_PW)
-print("Login OK")
-s.quit()
+if __name__ == '__main__':
+    main()
