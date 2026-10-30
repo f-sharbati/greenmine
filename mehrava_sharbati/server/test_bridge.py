@@ -51,7 +51,7 @@ class BridgeTests(unittest.TestCase):
 
     def test_forecast_uses_original_outputs(self):
         irradiance={month:5.0 for month in bridge.pe.NASA_MONTH_KEYS}
-        with patch.object(bridge.pe,'fetch_nasa_irradiance',return_value=irradiance), patch.object(bridge.pe,'fetch_openmeteo_daily',return_value={}):
+        with patch('weather.nasa',return_value=(irradiance,{'source':'test','fetched_at':0,'stale':False})), patch.object(bridge.pe,'fetch_openmeteo_daily',return_value={}):
             result=bridge.main({'action':'forecast','plant':bridge.DEFAULT_PLANT,'tariff':25000})
         f=result['forecast']
         self.assertAlmostEqual(f['total_kwh'],sum(row['production_kwh'] for row in f['days']))

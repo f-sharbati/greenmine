@@ -8,4 +8,4 @@ The service uses persistent SQLite in GREENMINE_DATA_DIR, default .local for dev
 
 `server/bridge.py` adapts the original engine. `server/calibration.py` applies explicitly described production bias correction; it does not establish predictive accuracy. The original destructive initializer and email auth workflows are not invoked by this application.
 
-Run npm ci and npm run build in the app directory; run python -m unittest discover -s server -p 'test_*.py' using the Python venv. There are 25 tests. The deploy/smoke.py integration check requires a disposable database. See android/README.md for URL/build configuration; no physical-device verification is claimed.
+Run npm ci and npm run build in the app directory; run python -m unittest discover -s server -p 'test_*.py' using the Python venv. There are 29 tests. The deploy/smoke.py integration check requires a disposable database. See android/README.md for URL/build configuration; no physical-device verification is claimed.

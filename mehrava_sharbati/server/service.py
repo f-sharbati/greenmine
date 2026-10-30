@@ -126,6 +126,6 @@ if __name__=='__main__':
     try: result=main(json.load(sys.stdin)); status=200
     except ServiceError as exc: result={'error':exc.code}; status=exc.status
     except ValueError as exc:
-        code=str(exc); result={'error':code if re.fullmatch(r'(CSV|PLANT|TARIFF|ACTION)_[A-Z_]+',code) else 'INVALID_REQUEST'}; status=422
+        code=str(exc); result={'error':code if re.fullmatch(r'(CSV|PLANT|TARIFF|ACTION|WEATHER)_[A-Z_]+',code) else 'INVALID_REQUEST'}; status=503 if code=='WEATHER_UNAVAILABLE' else 422
     except Exception: result={'error':'SERVICE_UNAVAILABLE'}; status=503
     print(json.dumps({'status':status,'data':result},ensure_ascii=True,allow_nan=False))

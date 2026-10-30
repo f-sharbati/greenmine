@@ -29,3 +29,5 @@ Keep the previous container/image and release directory during promotion. Valida
 ## Remaining acceptance
 
 Production HTTPS, public browser login/signup/import/forecast, remote backup restoration and Android device login must be verified separately from the successful source tests/build. Public weather APIs may be unavailable; inspect forecast source/fallback metadata. Two months from one inverter cannot establish seasonal accuracy.
+
+NASA climatology is cached by location for 30 days. If refresh fails, data up to one year old may be used with explicit stale metadata. Without usable NASA data the API reports WEATHER_UNAVAILABLE. Network connect/read timeouts are bounded; Open-Meteo failures use the disclosed climate model. `deploy/backup.py` performs an online backup and restores it into an isolated in-memory database to verify integrity.

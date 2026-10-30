@@ -62,7 +62,7 @@ class CalibrationTests(unittest.TestCase):
   i={m:5. for m in bridge.pe.NASA_MONTH_KEYS};p=bridge.DEFAULT_PLANT;rows=bridge.main({'action':'overview'})['readings']
   f=calibrate(rows,p,i,date(2026,10,1),bridge.pe);self.assertTrue(f['applied'])
   self.assertEqual(f,calibrate(rows+[{'date':'2026-10-01','kwh':9999999}],p,i,date(2026,10,1),bridge.pe))
-  with patch.object(bridge.pe,'fetch_nasa_irradiance',return_value=i),patch.object(bridge.pe,'fetch_openmeteo_daily',return_value={}):
+  with patch('weather.nasa',return_value=(i,{'source':'test','fetched_at':0,'stale':False})),patch.object(bridge.pe,'fetch_openmeteo_daily',return_value={}):
    result=bridge.main({'action':'forecast','readings':rows})
   self.assertTrue(result['calibration']['applied']);self.assertNotEqual(result['uncalibrated_kwh'],result['forecast']['total_kwh'])
   self.assertAlmostEqual(result['forecast']['total_kwh'],sum(r['production_kwh'] for r in result['forecast']['days']))

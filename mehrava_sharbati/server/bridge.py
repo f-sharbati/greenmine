@@ -92,8 +92,15 @@ def main(data):
     plant, tariff = validate_settings(data)
     today = datetime.now(timezone(timedelta(hours=3, minutes=30))).date()
     lat, lon = pe.utm_to_latlon(plant['utm_easting'], plant['utm_northing'], plant['utm_zone'])
-    irradiance = pe.fetch_nasa_irradiance(lat, lon)
-    forecast = pe.next_month_forecast(plant, today=today, irradiance=irradiance)
+    from weather import nasa
+    irradiance, climate_source = nasa(pe, lat, lon)
+    from datetime import date
+    jy,jm,_ = pe.gregorian_to_jalali(today.year,today.month,today.day)
+    ny,nm = pe.next_jalali_month(jy,jm)
+    start = date(*pe.jalali_to_gregorian(ny,nm,1))
+    end = start + timedelta(days=pe.jalali_month_days(ny,nm)-1)
+    daily_api = pe.fetch_openmeteo_daily(lat,lon,max(start,today),min(end,today+timedelta(days=pe.FORECAST_HORIZON_DAYS)),timeout=(3,6))
+    forecast = pe.next_month_forecast(plant, today=today, irradiance=irradiance,daily_api=daily_api)
     from calibration import calibrate
     calibration = calibrate(data.get('readings', []), plant, irradiance, today, pe)
     uncalibrated_kwh = forecast['total_kwh']
@@ -103,7 +110,7 @@ def main(data):
         forecast['first_half_kwh'] = sum(r['production_kwh'] for r in forecast['days'] if r['day'] <= 15)
         forecast['second_half_kwh'] = sum(r['production_kwh'] for r in forecast['days'] if r['day'] > 15)
         forecast['total_kwh'] = round(sum(r['production_kwh'] for r in forecast['days']), 3)
-    return dict(calibration=calibration, uncalibrated_kwh=uncalibrated_kwh, forecast=forecast, annual=pe.monthly_production(plant, irradiance=irradiance),
+    return dict(climate_source=climate_source, calibration=calibration, uncalibrated_kwh=uncalibrated_kwh, forecast=forecast, annual=pe.monthly_production(plant, irradiance=irradiance),
         impact=pe.environmental_impact(forecast['total_kwh']), revenue=pe.revenue(forecast['total_kwh'], tariff),
         tariff=tariff, plant=plant)
 
