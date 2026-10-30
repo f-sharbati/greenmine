@@ -10,7 +10,9 @@ class AccountsTests(unittest.TestCase):
   self.tmp=tempfile.TemporaryDirectory();self.env=patch.dict(os.environ,{'GREENMINE_DATA_DIR':self.tmp.name});self.env.start()
  def tearDown(self):self.env.stop();self.tmp.cleanup()
  def register(self,email):return service.main({'op':'register','data':{'email':email,'password':'test-password-12345'},'client':email})
- def engine(self,t,**data):return service.main({'op':'engine','token':t,'data':data})
+ def engine(self,t,**data):
+  if data.get('action')=='import':data.setdefault('source_name','test source')
+  return service.main({'op':'engine','token':t,'data':data})
  def test_isolation_persistence_logout(self):
   a=self.register('a@example.org');b=self.register('b@example.org')
   self.engine(a['token'],action='import',csv='date,kwh\n2026-08-01,68.1')
@@ -20,6 +22,12 @@ class AccountsTests(unittest.TestCase):
   self.assertEqual(self.engine(again['token'],action='overview')['total_kwh'],68.1)
   service.main({'op':'logout','token':a['token']})
   with self.assertRaises(service.ServiceError):self.engine(a['token'],action='overview')
+ def test_eight_character_password_round_trip(self):
+  a=service.main({'op':'register','data':{'email':'short@example.org','password':'Test123!'},'client':'short'})
+  service.main({'op':'logout','token':a['token']})
+  b=service.main({'op':'login','data':{'email':'SHORT@example.org','password':'Test123!'}})
+  self.assertEqual(b['user']['id'],a['user']['id'])
+  with self.assertRaisesRegex(service.ServiceError,'PASSWORD_INVALID'):service.main({'op':'register','data':{'email':'invalid@example.org','password':'Test12!'}})
  def test_password_and_token_storage(self):
   a=self.register('a@example.org');db=service.connect()
   user=db.execute('SELECT salt,password_hash FROM users').fetchone();token=db.execute('SELECT token_hash FROM sessions').fetchone()[0];db.close()
@@ -47,22 +55,21 @@ class AccountsTests(unittest.TestCase):
   for action in ['overview','import','forecast','settings']:
    with self.assertRaisesRegex(service.ServiceError,'UNAUTHENTICATED'):self.engine('',action=action)
  def test_settings(self):
-  a=self.register('a@example.org');self.engine(a['token'],action='settings',plant={**bridge.DEFAULT_PLANT,'name':'My plant'},tariff=500)
+  a=self.register('a@example.org');self.engine(a['token'],action='settings',plant={**bridge.DEFAULT_PLANT,'name':'My plant','capacity_dc':14},tariff=500)
   self.assertEqual(self.engine(a['token'],action='overview')['plant']['name'],'My plant')
   with self.assertRaises(ValueError):self.engine(a['token'],action='settings',plant={'utm_zone':'39INVALID'})
  def test_inverter(self):
   a=self.register('a@example.org')
-  for serial,ok in [('one',True),('two',False)]:
+  for serial in ['one','two','one']:
    csv=f'Inverter type;Serial number\nKACO;{serial}\nDate;E[Wh]\n01/08/2026;100'
-   if ok:self.engine(a['token'],action='import',csv=csv)
-   else:
-    with self.assertRaisesRegex(service.ServiceError,'INVERTER_MISMATCH'):self.engine(a['token'],action='import',csv=csv)
+   result=self.engine(a['token'],action='import',csv=csv)
+  self.assertEqual(result['total_kwh'],.2);self.assertEqual(len(result['sources']),2)
 class CalibrationTests(unittest.TestCase):
  def test_history_fit_and_leakage(self):
   i={m:5. for m in bridge.pe.NASA_MONTH_KEYS};p=bridge.DEFAULT_PLANT;rows=bridge.main({'action':'overview'})['readings']
   f=calibrate(rows,p,i,date(2026,10,1),bridge.pe);self.assertTrue(f['applied'])
   self.assertEqual(f,calibrate(rows+[{'date':'2026-10-01','kwh':9999999}],p,i,date(2026,10,1),bridge.pe))
-  with patch('weather.nasa',return_value=(i,{'source':'test','fetched_at':0,'stale':False})),patch.object(bridge.pe,'fetch_openmeteo_daily',return_value={}):
+  with patch('weather.nasa',return_value=(i,{'source':'test','fetched_at':0,'stale':False})),patch('weather.daily_forecast',return_value=({}, {'source':'test'})):
    result=bridge.main({'action':'forecast','readings':rows})
   self.assertTrue(result['calibration']['applied']);self.assertNotEqual(result['uncalibrated_kwh'],result['forecast']['total_kwh'])
   self.assertAlmostEqual(result['forecast']['total_kwh'],sum(r['production_kwh'] for r in result['forecast']['days']))

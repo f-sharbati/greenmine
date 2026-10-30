@@ -35,3 +35,24 @@ NASA climatology is cached by location for 30 days. If refresh fails, data up to
 ## Existing VPS update layout
 
 The current VPS uses greenmine-app bound to 127.0.0.1:3001, the named volume greenmine_accounts:/data, and greenmine-edge using host networking and /opt/greenmine/edge/Caddyfile. Release sources are /opt/greenmine/releases/16794d8; build log /var/log/greenmine-build-16794d8.log. Do not start the fresh-install Compose proxy alongside this existing Caddy instance or replace the account volume with a new project-prefixed volume. Future updates should build an explicit image tag, smoke-test with a disposable database, take a consistent backup, replace only the app container using the same volume/origin/port, and verify public health/auth before retiring the previous image. The previous authenticated image greenmine:823637c is retained for rollback; it includes weather caching and predates the chart visibility fix.
+
+
+## Homeowner/judging update
+
+New accounts start with empty production history, plant name/capacity/location. Sample files under `/samples/` are downloads only; users import them themselves. Existing account passwords and history are preserved. Main setup requests total plant nameplate capacity and city/location. Individual panel counts/models and inverter brands/capacities are not required. Optional settings retain overall performance, representative tilt/direction, tariff and precise coordinates.
+
+Production is stored per account, source and local date in `production_readings`, with a unique composite key. Source identity uses export metadata (brand/model and serial); files without identifiers require a simple source name/selection. Replays do not add energy. Daily account totals sum sources. Coverage means all *registered* sources are present; incomplete dates are excluded from historical calibration. Do not mix externally combined totals with individual-device exports. Application-generated totals carry a Scope marker and matching reimports are no-ops. Supported daily CSV units/formats remain explicit; unknown vendor formats require an adapter/sample, not guessed units.
+
+The aggregate-site model uses total nameplate capacity, solar position and plane-of-array irradiation via pvlib. Daily totals are distributed over estimated hourly shapes. Overall performance accounts empirically for temperature, inverter conversion and other losses; no individual inverter, thermal or bifacial-rear model is claimed. Historical correction is fit only on completed, sufficiently recent dates with complete registered-source coverage. Annual climate baseline is displayed before historical adjustment and is not an annual accuracy claim. The owner-provided Tehran benchmark is diagnostic, not a forced output.
+
+Forecast windows are next Jalali month and 30 full calendar days beginning today in Asia/Tehran. Weather requests use `forecast_days=16`, then filter valid dates locally; mixing this parameter with explicit dates is rejected by the provider. Available weather days and climate fallback days are disclosed. Weather data is cached for one hour, NASA climatology as previously documented.
+
+Minimum password length is 8. Email recovery uses 6-digit codes valid 10 minutes, up to 5 attempts, single-use consumption, account/IP rate limits and a keyed code hash. Password/session changes occur only after a valid code; a successful reset revokes existing sessions. `recovery.key` is generated privately in the data volume. If lost/restored differently, pending codes become invalid; users request another code. Login remains password-only; no mandatory email activation, CAPTCHA or login OTP was added.
+
+SMTP configuration belongs in a root-only env file, `/opt/greenmine/config/mail.env`, passed to the container with `--env-file`. Variables: SMTP_HOST, SMTP_PORT, SMTP_TLS=starttls|ssl, SMTP_USER, SMTP_PASSWORD, SMTP_FROM. TLS is mandatory except for a localhost development sink. Never commit or include these values in frontend bundles. SMTP authentication was checked without sending messages; delivery acceptance is separate. `GREENMINE_SMTP_ENV_FILE` selects the optional mail env file for fresh Compose installs.
+
+### Migration and rollback
+
+Before promotion, take a consistent SQLite backup and stop the old app to stop writes. Starting the new service performs an additive, transaction-protected migration: legacy reading histories and import provenance are backfilled, and user/password/session rows are preserved. Validate counts, totals and replay on a backup clone first. Keep the account volume.
+
+After this release accepts new multi-source imports, blindly running the old single-source app can desynchronize its cached history from the new canonical readings. Prefer a forward fix. A rollback must enter maintenance, preserve all post-release data, and reconcile/import it before resuming writes; do not silently restore an older backup over new user data.

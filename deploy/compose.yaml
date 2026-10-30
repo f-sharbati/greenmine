@@ -4,6 +4,9 @@ services:
       context: ..
     restart: unless-stopped
     init: true
+    env_file:
+      - path: ${GREENMINE_SMTP_ENV_FILE:-/opt/greenmine/config/mail.env}
+        required: false
     environment:
       APP_ORIGIN: https://${GREENMINE_DOMAIN:?Set the approved domain}
     volumes:
