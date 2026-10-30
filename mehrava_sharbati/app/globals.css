@@ -40,3 +40,5 @@ html[data-theme=dark]{color-scheme:dark;--ink:#e0e9f6;--muted:#a3b4cc;--border:#
 .first-import{padding:22px;border-radius:20px;background:#f1f5fbe8;border:1px solid #b7c6d7;margin:20px 0}.first-import h2{font-size:24px;letter-spacing:0}.first-import p{max-width:850px}.first-import details{margin-top:18px}.first-import summary{cursor:pointer}
 
 .forecast-window{display:flex;gap:10px;flex-wrap:wrap;margin:18px 0}.forecast-window [aria-pressed=true]{background:var(--ink);color:var(--sage)}
+
+.mail-toast{position:fixed;bottom:24px;inset-inline:24px;z-index:120;max-width:660px;margin:auto;padding:18px 22px;background:var(--ink,#203b3b);color:white;border-radius:16px;box-shadow:0 10px 40px #0003;display:flex;gap:16px;align-items:center}.mail-toast button{margin-inline-start:auto;background:transparent;color:inherit;border:0;font-size:26px;cursor:pointer}

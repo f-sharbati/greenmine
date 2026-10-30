@@ -111,11 +111,15 @@ def user_for(db, token):
     if not isinstance(token,str) or len(token) != 64: raise ServiceError('UNAUTHENTICATED',401)
     row = db.execute('SELECT u.id,u.email FROM sessions s JOIN users u ON u.id=s.user_id WHERE s.token_hash=? AND s.expires_at>?', (digest(token),int(time.time()))).fetchone()
     if row is None: raise ServiceError('UNAUTHENTICATED',401)
-    return dict(row)
+    from mail_settings import allowed
+    return dict(row,mail_admin=allowed(row))
 
 def main(request):
     if not isinstance(request,dict): raise ServiceError('INVALID_REQUEST')
     op=request.get('op'); data=request.get('data') or {}
+    if op=='recovery_status':
+        from recovery import available
+        return {'recovery_available':available()}
     if not isinstance(data,dict): raise ServiceError('INVALID_REQUEST')
     with connect() as db:
         if op in ('forgot','reset'):
@@ -143,7 +147,8 @@ def main(request):
             with db:
                 db.execute('DELETE FROM sessions WHERE expires_at<=?',(int(time.time()),))
                 db.execute('INSERT INTO sessions VALUES (?,?,?)',(digest(token),uid,int(time.time())+SESSION_TTL))
-            return {'user':{'id':uid,'email':email},'token':token}
+            from mail_settings import allowed
+            return {'user':{'id':uid,'email':email,'mail_admin':allowed({'email':email})},'token':token}
         user=user_for(db,request.get('token'))
         if op=='me': return {'user':user}
         if op=='logout':
@@ -152,6 +157,9 @@ def main(request):
         if op!='engine': raise ServiceError('ACTION_INVALID')
         uid=user['id']; workspace=db.execute('SELECT * FROM workspaces WHERE user_id=?',(uid,)).fetchone()
         action=data.get('action')
+        if action=='mail_settings':
+            from mail_settings import run
+            return run(db,user,data,{'error':ServiceError,'rate':rate_limit})
         if action=='import':
             raw=data.get('csv')
             if not isinstance(raw,str) or len(raw.encode())>1_500_000: raise ServiceError('FILE_TOO_LARGE',413)

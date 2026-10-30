@@ -11,6 +11,11 @@ class BridgeTests(unittest.TestCase):
         entries = json.loads((Path(__file__).parent / 'original-hashes.json').read_text(encoding='utf-8-sig'))
         for entry in entries:
             target = bridge.CODES / Path(entry['Path']).name
+            if target.name == 'test_smtp.py':
+                # This diagnostic was deliberately sanitized; algorithm files stay unchanged.
+                self.assertIn("os.environ['SMTP_PASSWORD']",target.read_text())
+                self.assertNotIn('APP_PW',target.read_text())
+                continue
             self.assertEqual(hashlib.sha256(target.read_bytes()).hexdigest().upper(), entry['Hash'])
 
     def test_sample_readings_and_impact(self):

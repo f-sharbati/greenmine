@@ -3,7 +3,9 @@ import hashlib,hmac,json,os,secrets,smtplib,ssl,tempfile,time
 from pathlib import Path
 from email.message import EmailMessage
 
-def available():return all(os.environ.get(k) for k in ['SMTP_HOST','SMTP_USER','SMTP_PASSWORD'])
+from mail_settings import config
+
+def available():return all(config().get(k) for k in ['SMTP_HOST','SMTP_USER','SMTP_PASSWORD'])
 def key():
  root=Path(os.environ.get('GREENMINE_DATA_DIR',str(Path(__file__).parent.parent/'.local')));root.mkdir(mode=0o700,parents=True,exist_ok=True);p=root/'recovery.key'
  if not p.exists():
@@ -19,9 +21,10 @@ def key():
 
 def code_hash(challenge,code):return hmac.new(key(),(challenge+':'+code).encode(),hashlib.sha256).hexdigest()
 def send_code(email,code):
- message=EmailMessage();message['Subject']='GreenMine password recovery';message['From']=os.environ.get('SMTP_FROM') or os.environ['SMTP_USER'];message['To']=email
+ settings=config()
+ message=EmailMessage();message['Subject']='GreenMine password recovery';message['From']=settings.get('SMTP_FROM') or settings['SMTP_USER'];message['To']=email
  message.set_content(f'کد بازیابی رمز گرین‌ماین: {code}\n\nاین کد تا ۱۰ دقیقه معتبر است. اگر شما درخواست نداده‌اید، آن را نادیده بگیرید.\n\nGreenMine recovery code: {code}\nValid for 10 minutes. Your password has not changed.')
- host=os.environ['SMTP_HOST'];port=int(os.environ.get('SMTP_PORT','587'));mode=os.environ.get('SMTP_TLS','starttls')
+ host=settings['SMTP_HOST'];port=int(settings.get('SMTP_PORT','587'));mode=settings.get('SMTP_TLS') or 'starttls'
  if mode not in ('ssl','starttls','none'):raise ValueError('TLS_REQUIRED')
  if mode=='none' and host not in ('localhost','127.0.0.1','::1'):raise ValueError('TLS_REQUIRED')
  if mode=='ssl':client=smtplib.SMTP_SSL(host,port,timeout=8,context=ssl.create_default_context())
@@ -29,7 +32,7 @@ def send_code(email,code):
  with client as smtp:
   smtp.ehlo()
   if mode=='starttls':smtp.starttls(context=ssl.create_default_context());smtp.ehlo()
-  smtp.login(os.environ['SMTP_USER'],os.environ['SMTP_PASSWORD']);smtp.send_message(message)
+  smtp.login(settings['SMTP_USER'],settings['SMTP_PASSWORD']);smtp.send_message(message)
 
 def run(db,op,data,client,api):
  ServiceError=api['error']
