@@ -1,6 +1,6 @@
 Production live: https://greenmineapp.ir
 SSH: ssh greenmine (62.60.194.99:30222).
-Runtime: greenmine:823637c, source 823637c93f267713d67aa35bba49417a375a0ab6.
+Runtime: greenmine:02f4d63, source 02f4d63973e4e703c37036f2552b1898d491fac0.
 Container greenmine-app, private bind 127.0.0.1:3001, named volume greenmine_accounts:/data.
 Proxy greenmine-edge serves HTTPS and www redirect; config /opt/greenmine/edge/Caddyfile.
 29 tests and build passed on VPS. Public signup/logout/relogin, saved settings, CSV imports and calibrated forecast passed.
