@@ -28,7 +28,71 @@ def connect():
       CREATE TABLE IF NOT EXISTS imports(id INTEGER PRIMARY KEY, user_id INTEGER NOT NULL REFERENCES users(id), digest TEXT NOT NULL, filename TEXT NOT NULL, raw_csv TEXT NOT NULL, created_at INTEGER NOT NULL, UNIQUE(user_id,digest));
       CREATE TABLE IF NOT EXISTS attempts(bucket TEXT PRIMARY KEY, count INTEGER NOT NULL, reset_at INTEGER NOT NULL);
     ''')
+    migrate_sources(db)
     return db
+
+def migrate_sources(db):
+    db.executescript("""
+      CREATE TABLE IF NOT EXISTS production_readings(user_id INTEGER NOT NULL REFERENCES users(id),device_id TEXT NOT NULL,reading_date TEXT NOT NULL,kwh REAL NOT NULL CHECK(kwh>=0),PRIMARY KEY(user_id,device_id,reading_date));
+      CREATE TABLE IF NOT EXISTS import_sources(import_id INTEGER NOT NULL REFERENCES imports(id) ON DELETE CASCADE,device_id TEXT NOT NULL,PRIMARY KEY(import_id,device_id));
+      CREATE TABLE IF NOT EXISTS schema_meta(name TEXT PRIMARY KEY,value TEXT NOT NULL);
+    """)
+    if db.execute("SELECT 1 FROM schema_meta WHERE name='production_sources_v1'").fetchone():return
+    with db:
+        db.execute('BEGIN IMMEDIATE')
+        if db.execute("SELECT 1 FROM schema_meta WHERE name='production_sources_v1'").fetchone():return
+        for workspace in db.execute('SELECT user_id,serial,readings FROM workspaces').fetchall():
+            device='serial:'+workspace['serial'] if workspace['serial'] else 'manual:legacy'
+            for legacy_import in db.execute('SELECT raw_csv FROM imports WHERE user_id=? ORDER BY id',(workspace['user_id'],)).fetchall():
+                detected,serial=detected_source(legacy_import['raw_csv'])
+                if detected and serial==workspace['serial']:device=detected;break
+            for r in json.loads(workspace['readings']):
+                db.execute('INSERT OR IGNORE INTO production_readings VALUES (?,?,?,?)',(workspace['user_id'],device,r['date'],r['kwh']))
+            db.execute('INSERT OR IGNORE INTO import_sources SELECT id,? FROM imports WHERE user_id=?',(device,workspace['user_id']))
+        db.execute("INSERT INTO schema_meta VALUES ('production_sources_v1','1')")
+
+def sources(db,uid):
+    return [dict(r) for r in db.execute('SELECT device_id,count(*) AS days,round(sum(kwh),6) AS total_kwh,min(reading_date) AS first_date,max(reading_date) AS last_date FROM production_readings WHERE user_id=? GROUP BY device_id ORDER BY device_id',(uid,))]
+
+def daily_readings(db,uid):
+    count=len(sources(db,uid))
+    return [dict(date=r['reading_date'],kwh=round(r['energy'],6),source_count=r['source_count'],expected_sources=count,complete=r['source_count']==count) for r in db.execute('SELECT reading_date,sum(kwh) AS energy,count(*) AS source_count FROM production_readings WHERE user_id=? GROUP BY reading_date ORDER BY reading_date',(uid,))]
+
+def is_total_report(raw):
+    import csv
+    lines=raw.lstrip('\ufeff').splitlines()
+    start=next(i for i,line in enumerate(lines) if line.strip().lower().startswith(('date,','date;')))
+    reader=csv.DictReader(lines[start:],delimiter=';' if ';' in lines[start] else ',')
+    reader.fieldnames=[name.strip().lower() for name in reader.fieldnames]
+    return any(str(row.get('scope','')).strip().lower()=='plant_total' for row in reader)
+
+def detected_source(raw):
+    import csv
+    lines=raw.splitlines()
+    for i,line in enumerate(lines[:-1]):
+        delimiter=';' if ';' in line else ','
+        keys=[x.strip().lower() for x in next(csv.reader([line],delimiter=delimiter))]
+        field=next((k for k in ['serial number','serial','inverter serial','device id'] if k in keys),None)
+        if not field:continue
+        values=next(csv.reader([lines[i+1]],delimiter=delimiter));index=keys.index(field)
+        if index>=len(values) or not values[index].strip():continue
+        serial=values[index].strip()
+        family_key=next((k for k in ['brand','manufacturer','inverter type','device type','inverter model','model'] if k in keys),None)
+        family=values[keys.index(family_key)].strip().casefold() if family_key and keys.index(family_key)<len(values) else ''
+        if len(serial)>100 or len(family)>100 or any(ord(c)<32 for c in serial+family):raise ServiceError('CSV_SOURCE_INVALID')
+        return 'serial:'+(family+'|' if family else '')+serial,serial
+    return None,None
+
+def import_source(db,uid,data,raw):
+    device,serial=detected_source(raw)
+    if device:return device,serial
+    selected=data.get('source_id');known={r['device_id'] for r in sources(db,uid)}
+    if selected:
+        if selected not in known:raise ServiceError('CSV_SOURCE_INVALID')
+        return selected,None
+    label=data.get('source_name')
+    if isinstance(label,str) and 1<=len(label.strip())<=100 and not any(ord(c)<32 for c in label):return 'manual:'+' '.join(label.split()).casefold(),None
+    raise ServiceError('CSV_SOURCE_REQUIRED',422)
 
 def password_hash(password, salt):
     return hashlib.scrypt(password.encode(), salt=bytes.fromhex(salt), n=16384, r=8, p=1, dklen=64).hex()
@@ -47,17 +111,24 @@ def user_for(db, token):
     if not isinstance(token,str) or len(token) != 64: raise ServiceError('UNAUTHENTICATED',401)
     row = db.execute('SELECT u.id,u.email FROM sessions s JOIN users u ON u.id=s.user_id WHERE s.token_hash=? AND s.expires_at>?', (digest(token),int(time.time()))).fetchone()
     if row is None: raise ServiceError('UNAUTHENTICATED',401)
-    return dict(row)
+    from mail_settings import allowed
+    return dict(row,mail_admin=allowed(row))
 
 def main(request):
     if not isinstance(request,dict): raise ServiceError('INVALID_REQUEST')
     op=request.get('op'); data=request.get('data') or {}
+    if op=='recovery_status':
+        from recovery import available
+        return {'recovery_available':available()}
     if not isinstance(data,dict): raise ServiceError('INVALID_REQUEST')
     with connect() as db:
+        if op in ('forgot','reset'):
+            from recovery import run
+            return run(db,op,data,str(request.get('client','local')),{'rate':rate_limit,'digest':digest,'password_hash':password_hash,'error':ServiceError})
         if op in ('register','login'):
             email=str(data.get('email','')).strip().lower(); password=data.get('password')
             if not re.fullmatch(r'[^\s@]{1,64}@[^\s@.]+(?:\.[^\s@.]+)+',email) or len(email)>254: raise ServiceError('EMAIL_INVALID')
-            if not isinstance(password,str) or not 12<=len(password)<=128: raise ServiceError('PASSWORD_INVALID')
+            if not isinstance(password,str) or not 8<=len(password)<=128: raise ServiceError('PASSWORD_INVALID')
             rate_limit(db,'account:'+digest(email));rate_limit(db,'ip:'+digest(str(request.get('client','unknown'))),30)
             if op=='register':
                 salt=secrets.token_hex(16)
@@ -65,7 +136,7 @@ def main(request):
                     with db:
                         cur=db.execute('INSERT INTO users(email,salt,password_hash,created_at) VALUES (?,?,?,?)',(email,salt,password_hash(password,salt),int(time.time())))
                         uid=cur.lastrowid
-                        db.execute('INSERT INTO workspaces VALUES (?,?,?,?,?,?)',(uid,json.dumps(bridge.DEFAULT_PLANT),25000,'[]',None,int(time.time())))
+                        db.execute('INSERT INTO workspaces VALUES (?,?,?,?,?,?)',(uid,json.dumps(bridge.EMPTY_PLANT),25000,'[]',None,int(time.time())))
                 except sqlite3.IntegrityError: raise ServiceError('ACCOUNT_EXISTS',409)
             else:
                 row=db.execute('SELECT * FROM users WHERE email=?',(email,)).fetchone()
@@ -76,7 +147,8 @@ def main(request):
             with db:
                 db.execute('DELETE FROM sessions WHERE expires_at<=?',(int(time.time()),))
                 db.execute('INSERT INTO sessions VALUES (?,?,?)',(digest(token),uid,int(time.time())+SESSION_TTL))
-            return {'user':{'id':uid,'email':email},'token':token}
+            from mail_settings import allowed
+            return {'user':{'id':uid,'email':email,'mail_admin':allowed({'email':email})},'token':token}
         user=user_for(db,request.get('token'))
         if op=='me': return {'user':user}
         if op=='logout':
@@ -85,6 +157,9 @@ def main(request):
         if op!='engine': raise ServiceError('ACTION_INVALID')
         uid=user['id']; workspace=db.execute('SELECT * FROM workspaces WHERE user_id=?',(uid,)).fetchone()
         action=data.get('action')
+        if action=='mail_settings':
+            from mail_settings import run
+            return run(db,user,data,{'error':ServiceError,'rate':rate_limit})
         if action=='import':
             raw=data.get('csv')
             if not isinstance(raw,str) or len(raw.encode())>1_500_000: raise ServiceError('FILE_TOO_LARGE',413)
@@ -92,33 +167,51 @@ def main(request):
             from datetime import date, datetime, timezone, timedelta
             today = datetime.now(timezone(timedelta(hours=3, minutes=30))).date()
             if any(date.fromisoformat(r['date'])>today for r in rows): raise ServiceError('CSV_FUTURE')
-            # The UI manages one plant/inverter per account in this release.
-            lines=raw.splitlines(); serial=None
-            for i,line in enumerate(lines[:-1]):
-                if 'Serial number' in line:
-                    keys=line.split(';'); values=lines[i+1].split(';')
-                    if 'Serial number' in keys and len(values)>keys.index('Serial number'): serial=values[keys.index('Serial number')].strip()
+            if is_total_report(raw):
+                existing={r['date']:r['kwh'] for r in daily_readings(db,uid)}
+                if any(r['date'] not in existing or abs(existing[r['date']]-r['kwh'])>1e-6 for r in rows):raise ServiceError('CSV_TOTAL_REPORT')
+                return dict(**bridge.summary(daily_readings(db,uid)),sources=sources(db,uid),data_quality={'complete_days':sum(r['complete'] for r in daily_readings(db,uid)),'partial_days':sum(not r['complete'] for r in daily_readings(db,uid))},plant={**bridge.DEFAULT_PLANT,**json.loads(workspace['plant'])},tariff=workspace['tariff'],source='Saved production readings',sample=False)
             with db:
                 db.execute('BEGIN IMMEDIATE')
-                workspace=db.execute('SELECT * FROM workspaces WHERE user_id=?',(uid,)).fetchone()
-                if serial and workspace['serial'] and serial!=workspace['serial']: raise ServiceError('INVERTER_MISMATCH')
-                existing={r['date']:r for r in json.loads(workspace['readings'])}
+                device,serial=import_source(db,uid,data,raw)
+                existing={r['reading_date']:r['kwh'] for r in db.execute('SELECT reading_date,kwh FROM production_readings WHERE user_id=? AND device_id=?',(uid,device))}
                 for row in rows:
-                    if row['date'] in existing and existing[row['date']]['kwh']!=row['kwh']: raise ServiceError('CSV_CONFLICT')
-                    existing[row['date']]=row
-                merged=sorted(existing.values(),key=lambda r:r['date'])
+                    if row['date'] in existing and existing[row['date']]!=row['kwh']:raise ServiceError('CSV_CONFLICT')
+                    db.execute('INSERT OR IGNORE INTO production_readings VALUES (?,?,?,?)',(uid,device,row['date'],row['kwh']))
+                merged=daily_readings(db,uid)
                 db.execute('UPDATE workspaces SET readings=?,serial=COALESCE(serial,?),updated_at=? WHERE user_id=?',(json.dumps(merged),serial,int(time.time()),uid))
                 db.execute('INSERT OR IGNORE INTO imports(user_id,digest,filename,raw_csv,created_at) VALUES (?,?,?,?,?)',(uid,digest(raw),str(data.get('filename','upload.csv'))[:255],raw,int(time.time())))
+                import_id=db.execute('SELECT id FROM imports WHERE user_id=? AND digest=?',(uid,digest(raw))).fetchone()[0]
+                db.execute('INSERT OR IGNORE INTO import_sources VALUES (?,?)',(import_id,device))
         if action in ('overview','import'):
             workspace=db.execute('SELECT * FROM workspaces WHERE user_id=?',(uid,)).fetchone()
-            return dict(**bridge.summary(json.loads(workspace['readings'])),plant=json.loads(workspace['plant']),tariff=workspace['tariff'],source='Saved production readings',sample=False)
+            rows=daily_readings(db,uid)
+            return dict(**bridge.summary(rows),sources=sources(db,uid),data_quality={'complete_days':sum(r['complete'] for r in rows),'partial_days':sum(not r['complete'] for r in rows)},plant={**bridge.DEFAULT_PLANT,**json.loads(workspace['plant'])},tariff=workspace['tariff'],source='Saved production readings',sample=False)
         if action=='settings':
-            plant,tariff=bridge.validate_settings(data)
+            plant,tariff=bridge.validate_settings(data,require_specs=True)
             with db: db.execute('UPDATE workspaces SET plant=?,tariff=?,updated_at=? WHERE user_id=?',(json.dumps(plant),tariff,int(time.time()),uid))
             return {'plant':plant,'tariff':tariff}
+        if action=='locations':
+            query=data.get('query','')
+            if not isinstance(query,str) or not 2<=len(query.strip())<=100:raise ServiceError('LOCATION_QUERY_INVALID')
+            rate_limit(db,'locations:'+str(uid),30)
+            if query.strip().casefold() in ('tehran','تهران'):
+                lat,lon=bridge.plant_coordinates(bridge.DEFAULT_PLANT)
+                return {'locations':[{'name':'تهران — موقعیت تقریبی نمونه' if data.get('language')=='fa' else 'Tehran — approximate sample location','latitude':lat,'longitude':lon,'approximate':True}]}
+            import requests
+            try:
+                response=requests.get('https://geocoding-api.open-meteo.com/v1/search',params={'name':query.strip(),'countryCode':'IR','count':8,'language':'fa' if data.get('language')=='fa' else 'en'},timeout=(3,6))
+                response.raise_for_status();values=response.json().get('results',[])
+                locations=[{'name':', '.join(str(r[k]) for k in ['name','admin1','country'] if r.get(k)),'latitude':float(r['latitude']),'longitude':float(r['longitude'])} for r in values]
+            except Exception:raise ServiceError('LOCATION_UNAVAILABLE',503)
+            return {'locations':locations}
         if action=='forecast':
             rate_limit(db,'forecast:'+str(uid),15)
-            return bridge.main({'action':'forecast','plant':json.loads(workspace['plant']),'tariff':workspace['tariff'],'readings':json.loads(workspace['readings'])})
+            rows=daily_readings(db,uid)
+            if not rows and json.loads(workspace['plant']).get('forecast_mode','history_calibrated')!='model_only':raise ServiceError('CSV_REQUIRED',422)
+            result=bridge.main({'action':'forecast','plant':json.loads(workspace['plant']),'tariff':workspace['tariff'],'readings':[r for r in rows if r['complete']],'horizon':data.get('horizon','next_month')})
+            result['data_quality']={'sources':len(sources(db,uid)),'complete_days':sum(r['complete'] for r in rows),'partial_days':sum(not r['complete'] for r in rows)}
+            return result
         raise ServiceError('ACTION_INVALID')
 
 if __name__=='__main__':

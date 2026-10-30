@@ -2,7 +2,7 @@
 from datetime import date, timedelta
 import math
 
-def calibrate(readings, plant, irradiance, today, pe):
+def eligible_history(readings, today):
     prior={}
     for row in readings:
         day=date.fromisoformat(row['date']); value=float(row['kwh'])
@@ -11,11 +11,17 @@ def calibrate(readings, plant, irradiance, today, pe):
         if day in prior and prior[day]!=value: raise ValueError('CSV_CONFLICT')
         prior[day]=value
     result={'model':'climate_with_production_bias_v2','applied':False,'factor':1.0,'reason':'INSUFFICIENT_HISTORY','training_days':len(prior)}
-    if len(prior)<21:return result
+    if len(prior)<21:return prior, result
     last=max(prior); first=max(min(prior),last-timedelta(days=89)); prior={d:v for d,v in prior.items() if d>=first}
     result.update(training_start=first.isoformat(),training_end=last.isoformat(),training_days=len(prior),staleness_days=(today-last).days)
-    if len(prior)<21:return result
-    if (today-last).days>45:result['reason']='STALE_HISTORY';return result
+    if len(prior)<21:return prior, result
+    if (today-last).days>45:result['reason']='STALE_HISTORY';return prior, result
+    result['reason']='ELIGIBLE'
+    return prior,result
+
+def calibrate(readings, plant, irradiance, today, pe):
+    prior,result=eligible_history(readings,today)
+    if result['reason']!='ELIGIBLE':return result
     lat,_=pe.utm_to_latlon(plant['utm_easting'],plant['utm_northing'],plant['utm_zone'])
     coefficient=plant['capacity_ac']*plant['performance_ratio']*pe.tilt_azimuth_factor(plant['tilt'],plant['azimuth'],lat)*pe.MOUNT_FACTORS[plant['mount_type']]*pe.PANEL_FACTORS[plant['panel_type']]
     expected=sum(pe.climatology_ghi(irradiance,d)*coefficient for d in prior)

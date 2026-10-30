@@ -28,3 +28,35 @@ def nasa(pe,lat,lon):
  except Exception:
   if cached:return cached['values'],dict(source='cache',fetched_at=cached['fetched_at'],stale=True)
   raise ValueError('WEATHER_UNAVAILABLE') from None
+
+def daily_forecast(pe,lat,lon,start,end):
+ """Use forecast_days=16; explicit end_date can reject otherwise available dates."""
+ if start>end:return {},{'source':'outside_horizon'}
+ from datetime import date,datetime,timezone,timedelta
+ import requests
+ today=datetime.now(timezone(timedelta(hours=3,minutes=30))).date().isoformat()
+ root=Path(os.environ.get('GREENMINE_DATA_DIR',str(Path(__file__).parent.parent/'.local')))/'climate';root.mkdir(parents=True,exist_ok=True,mode=0o700)
+ cache=root/('forecast-'+hashlib.sha256(f'{lat:.4f},{lon:.4f},{today}'.encode()).hexdigest()+'.json')
+ def select(payload):
+  result={}
+  for k,v in payload['days'].items():
+   d=date.fromisoformat(k)
+   if start<=d<=end and isinstance(v,(int,float)) and math.isfinite(v) and v>=0:result[d]=v
+  return result
+ try:
+  payload=json.loads(cache.read_text())
+  if 0<=time.time()-payload['fetched_at']<3600:return select(payload),dict(source='cache',fetched_at=payload['fetched_at'])
+ except (OSError,ValueError,KeyError,TypeError):pass
+ try:
+  response=requests.get(pe.OPEN_METEO_URL,params={'latitude':round(lat,4),'longitude':round(lon,4),'daily':'shortwave_radiation_sum','timezone':'Asia/Tehran','forecast_days':16},timeout=(3,6))
+  response.raise_for_status();daily=response.json().get('daily',{})
+  days={d:float(v)/3.6 for d,v in zip(daily.get('time',[]),daily.get('shortwave_radiation_sum',[])) if v is not None and math.isfinite(float(v)) and float(v)>=0}
+  if not days:raise ValueError('WEATHER_UNAVAILABLE')
+  payload={'fetched_at':time.time(),'days':days};fd,name=tempfile.mkstemp(dir=root,prefix='forecast-',suffix='.tmp')
+  try:
+   with os.fdopen(fd,'w') as f:json.dump(payload,f,allow_nan=False)
+   os.replace(name,cache)
+  finally:
+   if os.path.exists(name):os.unlink(name)
+  return select(payload),dict(source='live',fetched_at=payload['fetched_at'])
+ except Exception:return {},dict(source='unavailable')

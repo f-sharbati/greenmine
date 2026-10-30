@@ -9,7 +9,7 @@ FROM node:22-bookworm-slim AS runtime
 RUN apt-get update && apt-get install -y --no-install-recommends python3 python3-venv ca-certificates && rm -rf /var/lib/apt/lists/*
 WORKDIR /app
 COPY mehrava_sharbati/server/requirements.txt /tmp/requirements.txt
-RUN python3 -m venv /opt/venv && /opt/venv/bin/pip install --no-cache-dir -r /tmp/requirements.txt
+RUN python3 -m venv /opt/venv && /opt/venv/bin/pip install --timeout 120 --retries 5 --no-cache-dir -r /tmp/requirements.txt
 COPY --from=build --chown=node:node /app /app
 COPY --chown=node:node *.py /opt/greenmine/python/codes/
 ENV NODE_ENV=production NEXT_TELEMETRY_DISABLED=1 PYTHON_EXECUTABLE=/opt/venv/bin/python GREENMINE_PYTHON_ROOT=/opt/greenmine/python

@@ -1,11 +1,11 @@
-# GreenMine solar application
+# GreenMine homeowner application
 
-The production application is available at https://greenmineapp.ir. See ../PRODUCTION.md for the architecture, validation and deployment limitations.
+Live URL: https://greenmineapp.ir. See ../PRODUCTION.md and ../deploy/release.json for operations and runtime identity.
 
-Run npm ci and npm run dev in this directory, with Python dependencies installed from server/requirements.txt. Set PYTHON_EXECUTABLE to the virtual environment executable. Sign up, configure the actual plant and import CSV history; new accounts start empty. The supplied two KACO files contain 61 daily readings totaling 3930.115 kWh.
+New accounts begin empty. Download optional sample CSVs from the dashboard and import them yourself. The supplied August/September files contain 61 dates totaling 3930.115 kWh. Exports from multiple inverter sources are stored separately and summed by day, with replay/conflict protection and incomplete-coverage warnings.
 
-The authenticated API saves accounts, plant settings, source CSVs and merged production history in SQLite. Forecasting uses the original Python engine plus a historical production bias correction. NASA climatology is cached with source/age metadata. Forecast output is an estimate; two months of one inverter do not validate seasonal accuracy. Original legacy Python files are unchanged and their destructive initializer is not used.
+Main plant inputs are total capacity and city/location; individual panel or inverter inventories are not required. The aggregate solar model uses site geometry and imported history. Choose next Persian month or 30 days beginning today. Available weather coverage and climate fallback are visible. Annual output is an unadjusted climate baseline, not a validated annual forecast. Accuracy remains subject to independent evaluation.
 
-Validation: npm run build; python -m unittest discover -s server -p 'test_*.py'. There are 29 backend tests. deploy/smoke.py at repository root is for disposable test databases. Production HTTPS, signup/logout/relogin, account persistence, both CSV imports and the calibrated forecast have been exercised. Backup integrity was verified through isolated restoration.
+Passwords require 8–128 characters. Login is password-only. Optional configured SMTP enables expiring, one-time email recovery codes. No SMTP secrets or private databases belong in this repository.
 
-Android is a Java WebView client in android/. Release builds require -PgreenmineUrl=https://greenmineapp.ir. The supplied handoff describes an earlier USB debug APK; its installed behavior and release signing have not been independently verified here. See android/README.md for build instructions. Tokenization remains deferred; displayed carbon equivalents are illustrative and not issued/tradable credits.
+Install Python dependencies from server/requirements.txt and run npm ci. Set PYTHON_EXECUTABLE to the virtual-environment Python. Run npm run build and python -m unittest discover -s server -p 'test_*.py'. Use deploy/smoke.py only with a disposable database. Public flow and physical Android-device acceptance are separate checks; no new signed APK is claimed.

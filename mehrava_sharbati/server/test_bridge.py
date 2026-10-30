@@ -11,6 +11,11 @@ class BridgeTests(unittest.TestCase):
         entries = json.loads((Path(__file__).parent / 'original-hashes.json').read_text(encoding='utf-8-sig'))
         for entry in entries:
             target = bridge.CODES / Path(entry['Path']).name
+            if target.name == 'test_smtp.py':
+                # This diagnostic was deliberately sanitized; algorithm files stay unchanged.
+                self.assertIn("os.environ['SMTP_PASSWORD']",target.read_text())
+                self.assertNotIn('APP_PW',target.read_text())
+                continue
             self.assertEqual(hashlib.sha256(target.read_bytes()).hexdigest().upper(), entry['Hash'])
 
     def test_sample_readings_and_impact(self):
@@ -51,7 +56,7 @@ class BridgeTests(unittest.TestCase):
 
     def test_forecast_uses_original_outputs(self):
         irradiance={month:5.0 for month in bridge.pe.NASA_MONTH_KEYS}
-        with patch('weather.nasa',return_value=(irradiance,{'source':'test','fetched_at':0,'stale':False})), patch.object(bridge.pe,'fetch_openmeteo_daily',return_value={}):
+        with patch('weather.nasa',return_value=(irradiance,{'source':'test','fetched_at':0,'stale':False})), patch('weather.daily_forecast',return_value=({}, {'source':'test'})):
             result=bridge.main({'action':'forecast','plant':bridge.DEFAULT_PLANT,'tariff':25000})
         f=result['forecast']
         self.assertAlmostEqual(f['total_kwh'],sum(row['production_kwh'] for row in f['days']))

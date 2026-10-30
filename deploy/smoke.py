@@ -19,7 +19,8 @@ assert req('/api/engine',{'action':'overview'})[0]==401
 status,data,h=req('/api/auth',{'action':'register','email':email,'password':pw});assert status==200,(status,data)
 assert 'HttpOnly' in h['Set-Cookie'] and 'SameSite=lax' in h['Set-Cookie'] and 'token' not in data
 if a.origin.startswith('https:'):assert 'Secure' in h['Set-Cookie']
-assert req('/api/engine',{'action':'overview'})[1]['readings']==[]
+fresh=req('/api/engine',{'action':'overview'})[1]
+assert fresh['readings']==[] and fresh['sources']==[] and fresh['plant']['capacity_dc'] is None and fresh['plant']['latitude'] is None
 for name in ['202608.CSV','202609.CSV']:
  status,data,_=req('/api/engine',{'action':'import','csv':(a.csv_dir/name).read_text(),'filename':name});assert status==200,(status,data)
 assert data['total_kwh']==3930.115 and len(data['readings'])==61
@@ -30,6 +31,10 @@ assert req('/api/auth',{'action':'login','email':email,'password':pw})[0]==200
 assert req('/api/engine',{'action':'overview'})[1]['total_kwh']==3930.115
 result={'auth_import_csrf_persistence':'passed','days':61,'total_kwh':3930.115}
 if a.forecast:
+ status,settings,_=req('/api/engine',{'action':'settings','plant':{'name':'Smoke test plant','capacity_dc':14,'location_mode':'gps','latitude':35.756256,'longitude':51.431395},'tariff':25000});assert status==200,(status,settings)
  status,data,_=req('/api/engine',{'action':'forecast'});assert status==200,(status,data)
- result.update(forecast_status=status,calibration=data.get('calibration'),forecast_kwh=data.get('forecast',{}).get('total_kwh'))
+ result.update(forecast_status=status,calibration=data.get('calibration'),forecast_kwh=data.get('forecast',{}).get('total_kwh'),annual_baseline_kwh=data.get('annual',{}).get('annual_kwh'))
+ status,rolling,_=req('/api/engine',{'action':'forecast','horizon':'rolling_30'});assert status==200,(status,rolling)
+ assert len(rolling['forecast']['days'])==30 and rolling['forecast']['horizon']=='rolling_30'
+ result['rolling_30']={k:rolling['forecast'][k] for k in ['target_start','target_end','total_kwh','api_days','model_days']}
 print(json.dumps(result))

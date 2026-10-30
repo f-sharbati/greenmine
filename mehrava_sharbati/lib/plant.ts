@@ -1,0 +1,2 @@
+export type Plant={name:string;capacity_dc:number|null;capacity_ac:number|null;performance_ratio:number;tilt:number;azimuth:number;utm_easting:number|null;utm_northing:number|null;utm_zone:string;panel_type:string;mount_type:string;location_mode:'utm'|'gps';latitude:number|null;longitude:number|null;location_name:string;forecast_mode:'history_calibrated'|'model_only'};
+export type LocationResult={name:string;latitude:number;longitude:number};
