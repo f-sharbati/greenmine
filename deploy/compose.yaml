@@ -9,6 +9,8 @@ services:
         required: false
     environment:
       APP_ORIGIN: https://${GREENMINE_DOMAIN:?Set the approved domain}
+      GREENMINE_ADMIN_EMAIL: ${GREENMINE_ADMIN_EMAIL:-}
+      SMTP_REQUIRE_SETUP: ${SMTP_REQUIRE_SETUP:-1}
     volumes:
       - greenmine_accounts:/data
     expose:
