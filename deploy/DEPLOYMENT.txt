@@ -1,5 +1,7 @@
-Authenticated production candidate: see ../PRODUCTION.md.
-VPS greenmine at 62.60.194.99, SSH port 30222.
-DNS zone apex/www A records point to this VPS; IRNIC nameservers saved as ns1.liara.zone and ns2.liara.zone.
-Local and container backend tests: 29 passed. Production build passed. Public HTTPS acceptance remains a separate check.
-Persistent account volume must survive container replacement. Never invoke the legacy initializer.
+Production live: https://greenmineapp.ir
+SSH: ssh greenmine (62.60.194.99:30222).
+Runtime: greenmine:823637c, source 823637c93f267713d67aa35bba49417a375a0ab6.
+Container greenmine-app, private bind 127.0.0.1:3001, named volume greenmine_accounts:/data.
+Proxy greenmine-edge serves HTTPS and www redirect; config /opt/greenmine/edge/Caddyfile.
+29 tests and build passed on VPS. Public signup/logout/relogin, saved settings, CSV imports and calibrated forecast passed.
+See ../PRODUCTION.md before upgrading. Fresh-install Compose is not the running VPS topology.

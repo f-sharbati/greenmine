@@ -16,7 +16,7 @@ Create a Python venv and install `mehrava_sharbati/server/requirements.txt`. Run
 
 ## Deployment and access
 
-Run `deploy/bootstrap.sh` only on the intended Ubuntu VPS. Set `GREENMINE_DOMAIN=greenmineapp.ir` and run `docker compose -f deploy/compose.yaml up -d --build`. The account volume must persist across updates; never use `down -v`. Expose only SSH, HTTP and HTTPS. The web backend must remain private behind Caddy. Canonical origin is `https://greenmineapp.ir`; www redirects there. Registration requires no SMTP credentials.
+For a fresh deployment, run `deploy/bootstrap.sh` only on the intended Ubuntu VPS. Set `GREENMINE_DOMAIN=greenmineapp.ir` and run `docker compose -f deploy/compose.yaml up -d --build`. The account volume must persist across updates; never use `down -v`. Expose only SSH, HTTP and HTTPS. The web backend must remain private behind Caddy. Canonical origin is `https://greenmineapp.ir`; www redirects there. Registration requires no SMTP credentials.
 
 Local SSH alias is `greenmine`, port 30222. No private keys, tokens, passwords, production database or signing keys are stored here. Repository authentication uses a separate repository deploy key on the operator computer, with write access scoped to this repository. Android release builds must use `-PgreenmineUrl=https://greenmineapp.ir`; a previously built APK must be checked for its embedded URL and signing identity before distribution. No physical-device acceptance is claimed.
 
@@ -26,8 +26,12 @@ Back up SQLite using its online backup API or sqlite3 `.backup`, not a live copy
 
 Keep the previous container/image and release directory during promotion. Validate the new container using a disposable database, then start with the persistent account volume and switch Caddy upstream only after health/auth checks pass. For rollback switch the upstream to the last compatible authenticated image and restore a verified backup only if schema compatibility requires it. The original unauthenticated preview is not a safe public rollback target.
 
-## Remaining acceptance
+## Acceptance and remaining work
 
-Production HTTPS, public browser login/signup/import/forecast, remote backup restoration and Android device login must be verified separately from the successful source tests/build. Public weather APIs may be unavailable; inspect forecast source/fallback metadata. Two months from one inverter cannot establish seasonal accuracy.
+Production HTTPS, public browser signup/logout/relogin, settings/history persistence, both CSV imports and the calibrated forecast passed on 2026-10-30. The running image is greenmine:823637c, built from source commit 823637c93f267713d67aa35bba49417a375a0ab6. Online backup restored into an isolated in-memory database with integrity_check=ok. Android device login and release signing remain unverified. No hosted CI result is claimed; tests and build ran locally and on the VPS. Public weather APIs may be unavailable; inspect forecast source/fallback metadata. Two months from one inverter cannot establish seasonal accuracy.
 
 NASA climatology is cached by location for 30 days. If refresh fails, data up to one year old may be used with explicit stale metadata. Without usable NASA data the API reports WEATHER_UNAVAILABLE. Network connect/read timeouts are bounded; Open-Meteo failures use the disclosed climate model. `deploy/backup.py` performs an online backup and restores it into an isolated in-memory database to verify integrity.
+
+## Existing VPS update layout
+
+The current VPS uses greenmine-app bound to 127.0.0.1:3001, the named volume greenmine_accounts:/data, and greenmine-edge using host networking and /opt/greenmine/edge/Caddyfile. Release sources are /opt/greenmine/releases/823637c; build log /var/log/greenmine-build-823637c.log. Do not start the fresh-install Compose proxy alongside this existing Caddy instance or replace the account volume with a new project-prefixed volume. Future updates should build an explicit image tag, smoke-test with a disposable database, take a consistent backup, replace only the app container using the same volume/origin/port, and verify public health/auth before retiring the previous image. The previous authenticated image is retained for rollback; it predates the weather-cache fix.
