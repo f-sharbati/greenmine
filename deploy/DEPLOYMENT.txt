@@ -1,0 +1,5 @@
+Authenticated production candidate: see ../PRODUCTION.md.
+VPS greenmine at 62.60.194.99, SSH port 30222.
+DNS zone apex/www A records point to this VPS; IRNIC nameservers saved as ns1.liara.zone and ns2.liara.zone.
+Local and container backend tests: 25 passed. Production build passed. Public HTTPS acceptance remains a separate check.
+Persistent account volume must survive container replacement. Never invoke the legacy initializer.

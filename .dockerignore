@@ -1,0 +1,16 @@
+**/node_modules
+**/.next
+**/.git
+**/.env*
+**/secrets.toml
+**/*.db
+**/*.db-*
+**/android
+**/__pycache__
+**/*.pptx
+**/*.pdf
+**/.DS_Store
+
+**/.local
+**/*.sqlite3*
+**/AGENTS.md

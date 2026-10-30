@@ -1,0 +1,7 @@
+# Replace VERIFIED_SERVER_IP after Liara allocates the VPS address.
+Host greenmine
+    HostName VERIFIED_SERVER_IP
+    User root
+    Port 30222
+    IdentityFile ~/.ssh/company_ed25519
+    IdentitiesOnly yes

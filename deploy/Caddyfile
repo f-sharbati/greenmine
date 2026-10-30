@@ -1,0 +1,7 @@
+www.{$GREENMINE_DOMAIN} {
+    redir https://{$GREENMINE_DOMAIN}{uri} permanent
+}
+{$GREENMINE_DOMAIN} {
+    encode zstd gzip
+    reverse_proxy app:3000
+}

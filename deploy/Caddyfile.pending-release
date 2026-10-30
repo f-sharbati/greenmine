@@ -1,0 +1,5 @@
+greenmineapp.ir, www.greenmineapp.ir {
+    encode zstd gzip
+    header Retry-After 3600
+    respond "GreenMine is being prepared for release. Please try again later." 503
+}
