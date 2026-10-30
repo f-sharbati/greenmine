@@ -3,5 +3,8 @@ www.{$GREENMINE_DOMAIN} {
 }
 {$GREENMINE_DOMAIN} {
     encode zstd gzip
+    request_body {
+        max_size 2MB
+    }
     reverse_proxy app:3000
 }
