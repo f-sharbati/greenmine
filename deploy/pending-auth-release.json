@@ -1,0 +1,18 @@
+{
+  "status": "prepared_pending_fresh_smtp_and_live_otp_acceptance",
+  "archive": "GreenMine-auth-deploy-2026-10-31.zip",
+  "archive_sha256": "6f216e035607ac9881dda93bab6b7fcb33d0a59d3b7e544951067960dd51016c",
+  "manifest_files_verified": 131,
+  "application_files_modified": false,
+  "backend_tests_local": 95,
+  "production_build_local": "passed",
+  "production_migration_clone": "passed; existing users, sessions, passwords and production data preserved",
+  "candidate_image": "greenmine:auth-20261031-6f216e03",
+  "candidate_source_path": "/opt/greenmine/releases/auth-20261031-6f216e03",
+  "previous_running_image": "greenmine:8ff0556",
+  "backup_path": "/opt/greenmine/backups/pre-auth-20261031T143101Z",
+  "fresh_smtp": "required; previous credential is not reused",
+  "live_otp_delivery": "pending",
+  "android_native_rebuild": "not required by supplied release",
+  "issue": "https://github.com/f-sharbati/greenmine/issues/5"
+}
