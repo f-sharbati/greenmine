@@ -1,0 +1,34 @@
+Prepared operations for the supplied 2026-10-31 release
+
+Application source is unchanged. DEPLOY-MANIFEST.json remains the authority for all 131 supplied file hashes.
+Candidate: greenmine:auth-20261031-6f216e03
+Pinned image: sha256:3fb5583ead0501cae621b4e1dc8f026e1363b4373d7f52139a9fc4a704aa11d1
+Production remains greenmine:8ff0556 until fresh SMTP setup succeeds.
+
+The operator helper is installed at:
+/opt/greenmine/ops/auth-20261031/release-ops.py
+It is root-only, and does not edit application code. Run it as root on the existing VPS.
+
+1. After the owner supplies the Google-issued App Password privately, upload the mode-600 mail-fresh.env to /opt/greenmine/config/mail-fresh.env. Preserve the original mail.env. Never print its contents or pass passwords as command-line arguments.
+2. Run:
+   python3 /opt/greenmine/ops/auth-20261031/release-ops.py --bootstrap-mail /opt/greenmine/config/mail-fresh.env
+   The helper rejects an empty or exposed legacy password, snapshots existing data/private configuration, then runs the supplied configure_mail.py inside the new image as UID 1000. It authenticates SMTP over TLS and writes private /data/mail.json. It sends no email and keeps the old release running.
+3. Inspect:
+   python3 /opt/greenmine/ops/auth-20261031/release-ops.py --inspect
+4. Promote only after fresh SMTP succeeds:
+   python3 /opt/greenmine/ops/auth-20261031/release-ops.py --promote
+   This authenticates SMTP again, checks the expected current release and image, takes an online backup, stops writes, makes a final frozen SQLite backup, retains the old container, and starts the new image with the same data volume, origin, private port and service controls. The reverse proxy and DNS stay intact. Readiness checks require configured email.
+5. Complete public HTTPS/OTP acceptance with the designated mailbox fazi.sharbati@gmail.com. Do not reset a real production account's password to test recovery; use isolated test data or an explicitly designated disposable account. Keep codes/passwords out of logs and reports. Verify authenticated CSV/PDF export and the Android connected shell after email setup. The helper's startup result is not proof of live email delivery or full acceptance.
+6. Take a post-release consistent backup, verify restoration/integrity, and copy it off-host. Record the running image, public acceptance and any remaining device limitation before calling the release complete.
+
+Rollback safety
+
+The supplied release upgrades legacy scrypt password hashes to PBKDF2 after a correct password check. The prior image cannot verify that new format. Never blindly restore an old database or restart the old app after new authentication/data changes.
+
+For a failed initial promotion before business/security data changes, the helper can restore the retained container without replacing the database:
+   python3 /opt/greenmine/ops/auth-20261031/release-ops.py --rollback /opt/greenmine/backups/ACTUAL_BACKUP_DIRECTORY
+It compares users/password hashes, sessions, workspaces, imports and source readings to the frozen snapshot, checks again after stopping writes, and refuses rollback if anything changed. Preserve current data and use a forward fix/controlled maintenance in that case. No user records or private files are discarded.
+
+Verified so far
+
+95 backend tests and optimized builds passed locally and on the VPS. 87 runtime hashes match the supplied files. Additive migrations preserve all existing accounts/history on an isolated backup clone. The no-mail readiness checks passed. The deployment guard refused promotion while fresh mail setup was missing and the running production container ID stayed unchanged. Persian/English unauthenticated screens and formatting, byte-identical sample routes, and isolated CSV replay/forecast/scenario paths passed. These checks do not replace live email/OTP/PDF/device acceptance. No application file was changed to bypass email verification.
