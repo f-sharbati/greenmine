@@ -126,9 +126,7 @@ def main(request):
     op=request.get('op'); data=request.get('data') or {}
     if op=='auth_status':
         from mail_delivery import available
-        from auth_flow import mode
-        auth_mode=mode()
-        return {'auth_mode':auth_mode,'auth_email_available':available(),'password_scheme':'PBKDF2-HMAC-SHA-256','registration_verification':auth_mode=='email_otp','login_email_otp':auth_mode=='email_otp'}
+        return {'auth_email_available':available(),'password_scheme':'PBKDF2-HMAC-SHA-256','registration_verification':True,'login_email_otp':True}
     if op=='recovery_status':
         from recovery import available
         return {'recovery_available':available()}

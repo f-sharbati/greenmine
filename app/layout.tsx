@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from 'next';
+import 'leaflet/dist/leaflet.css';
 import './globals.css';
 export const metadata: Metadata = { title: 'GreenMine | Solar intelligence', description: 'Solar production insights, Persian-calendar forecasting and transparent carbon accounting.' };
 export const viewport: Viewport = {themeColor:'#e2e9f2'};

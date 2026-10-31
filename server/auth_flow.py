@@ -1,14 +1,9 @@
 """Inactive registration -> email activation; password -> email OTP -> session."""
-import hashlib,hmac,json,os,re,secrets,sqlite3,time
+import hashlib,hmac,json,re,secrets,sqlite3,time
 from mail_delivery import available,send_otp
 from recovery import key
 from passwords import hash_password,verify_password,needs_upgrade
 import captcha
-
-def mode():
-    value=os.environ.get('GREENMINE_AUTH_MODE','email_otp')
-    if value not in ('email_otp','password'):raise ValueError('AUTH_MODE_INVALID')
-    return value
 
 def migrate(db):
     columns={r['name'] for r in db.execute('PRAGMA table_info(users)')}
@@ -60,7 +55,6 @@ def run(db,op,data,binding,client,api):
     if not isinstance(binding,str) or not re.fullmatch('[a-f0-9]{64}',binding):raise Error('AUTH_CONTEXT_REQUIRED',400)
     if op=='captcha':return captcha.create(db,binding,client,api)
     if op in ('register','login'):
-        password_only=mode()=='password'
         email=str(data.get('email','')).strip().lower();password=data.get('password')
         if not re.fullmatch(r'[^\s@]{1,64}@[^\s@.]+(?:\.[^\s@.]+)+',email) or len(email)>254:raise Error('EMAIL_INVALID')
         if not isinstance(password,str) or not 8<=len(password)<=128:raise Error('PASSWORD_INVALID')
@@ -71,18 +65,14 @@ def run(db,op,data,binding,client,api):
         if op=='register':
             if data.get('password_confirmation')!=password:raise Error('PASSWORD_MISMATCH',422)
             if row:raise Error('ACCOUNT_EXISTS',409)
-            if not password_only and not available():raise Error('AUTH_MAIL_UNAVAILABLE',503)
+            if not available():raise Error('AUTH_MAIL_UNAVAILABLE',503)
             salt=secrets.token_hex(16);hashed=hash_password(password,salt)
             try:
                 with db:
-                    cur=db.execute('INSERT INTO users(email,salt,password_hash,created_at,active) VALUES (?,?,?,?,?)',(email,salt,hashed,int(time.time()),1 if password_only else 0))
+                    cur=db.execute('INSERT INTO users(email,salt,password_hash,created_at,active) VALUES (?,?,?,?,0)',(email,salt,hashed,int(time.time())))
                     db.execute('INSERT INTO workspaces VALUES (?,?,?,?,?,?)',(cur.lastrowid,json.dumps(api['empty_plant']),25000,'[]',None,int(time.time())))
                     row=db.execute('SELECT * FROM users WHERE id=?',(cur.lastrowid,)).fetchone()
             except sqlite3.IntegrityError:raise Error('ACCOUNT_EXISTS',409) from None
-            if password_only:
-                with db:
-                    audit(db,'password_registration',email,client,api)
-                    return session(db,row,api)
             return issue(db,row,'activation',binding,client,api)
         # A dummy KDF avoids a cheap distinguishable path for unknown emails.
         valid=verify_password(password,row['salt'],row['password_hash']) if row else False
@@ -94,11 +84,6 @@ def run(db,op,data,binding,client,api):
             salt=secrets.token_hex(16)
             with db:db.execute('UPDATE users SET salt=?,password_hash=? WHERE id=?',(salt,hash_password(password,salt),row['id']))
             row=db.execute('SELECT * FROM users WHERE id=?',(row['id'],)).fetchone()
-        if password_only:
-            if not row['active']:raise Error('ACCOUNT_INACTIVE',403)
-            with db:
-                audit(db,'password_login_verified',email,client,api)
-                return session(db,row,api)
         # Inactive users are guided back through activation, never granted a login OTP/session.
         return issue(db,row,'login' if row['active'] else 'activation',binding,client,api)
     api['rate'](db,'auth-verify-ip:'+api['digest'](client),40)

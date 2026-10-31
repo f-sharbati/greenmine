@@ -1,5 +1,7 @@
 # GreenMine deployment — 2026-10-31 / Android 1.3.1
 
+**Android 1.4.0 supersedes the shell-only APK notes below.** The current normal APK embeds the UI/assets and uses greenmineapp.ir for API requests. Build the website first and then build Android to include matching UI assets. See `ANDROID_BUNDLED_UI.md`. Deploying the backend alone does not replace an already bundled Android interface; rebuild the APK for future UI changes.
+
 **Authentication update:** this release now requires email activation for sign-up and an email OTP after password validation for new logins. Read `AUTHENTICATION.md` and bootstrap fresh SMTP with `server/configure_mail.py` **before restarting the updated service**. A blank SMTP password is insufficient. Existing data and sessions are retained; old scrypt password hashes migrate on successful password checks. No additional native APK change is required for this shared authentication update.
 
 The deployment ZIP is laid out with the Next.js project at its root and the original Python project in `python/`. It contains source, lockfile, public assets/fonts, Android source, original prediction code, pilot reference measurements and model tests. Build dependencies and generated build output are excluded so they can be installed for the Linux server.
