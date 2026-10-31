@@ -12,7 +12,7 @@
   "previous_running_image": "greenmine:8ff0556",
   "backup_path": "/opt/greenmine/backups/pre-auth-20261031T143101Z",
   "fresh_smtp": "required; previous credential is not reused",
-  "live_otp_delivery": "pending",
+  "live_otp_delivery": "pending fresh SMTP",
   "android_native_rebuild": "not required by supplied release",
   "issue": "https://github.com/f-sharbati/greenmine/issues/5",
   "backend_tests_container": 95,
@@ -20,5 +20,16 @@
   "runtime_manifest_files_matched": 87,
   "candidate_image_id": "sha256:3fb5583ead0501cae621b4e1dc8f026e1363b4373d7f52139a9fc4a704aa11d1",
   "readiness": "passed; HTTPS cookie flags, CAPTCHA image, unauthorized engine and cross-origin rejection checked without sending mail",
-  "source_commit": "01ab5fe409e012e740237bbfd1377dcaf1d0f6a5"
+  "source_commit": "01ab5fe409e012e740237bbfd1377dcaf1d0f6a5",
+  "deployment_helper": "/opt/greenmine/ops/auth-20261031/release-ops.py",
+  "smtp_promotion_guard": "passed: missing fresh SMTP refused; production container unchanged",
+  "rollback_guard": "refuses binary rollback after password/session/business-data changes",
+  "additional_checks": {
+    "fa_en_unauthenticated_ui": "passed; correct RTL/LTR and SMTP-unavailable state",
+    "formatting": "bundled check-format.cjs passed",
+    "staged_sample_routes": "byte-identical ZIP CSVs",
+    "isolated_csv_forecast_scenarios": "passed with mocked email/weather; no production DB access"
+  },
+  "authenticated_pdf_export": "pending after mail setup",
+  "deployment_guard_tests": 6
 }
