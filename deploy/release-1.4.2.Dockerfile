@@ -28,5 +28,6 @@ COPY --from=build --chown=node:node /app/node_modules/@types/leaflet /app/node_m
 COPY --from=build --chown=node:node /app/node_modules/@types/geojson /app/node_modules/@types/geojson
 COPY --chown=node:node server /app/server
 COPY --chown=node:node package.json package-lock.json RELEASE-MANIFEST.json RELEASE-1.4.1.md RELEASE-1.4.2.md ANDROID_BUNDLED_UI.md AUTHENTICATION.md DEPLOYMENT.md /app/
+COPY --chown=node:node UI_UPDATE.md .env.production.example /app/
 ENV GREENMINE_AUTH_MODE=email_otp
 USER node
