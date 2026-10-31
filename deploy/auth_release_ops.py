@@ -24,11 +24,12 @@ def config():
  if not all(c.get(k) for k in ['SMTP_HOST','SMTP_USER','SMTP_PASSWORD','verified_at']):raise Gate('FRESH_SMTP_SETUP_REQUIRED')
  if c['SMTP_HOST']!='smtp.gmail.com' or c['SMTP_USER']!='mehrava.sharbati@gmail.com' or str(c.get('SMTP_PORT'))!='587' or c.get('SMTP_TLS')!='starttls':raise Gate('UNEXPECTED_MAIL_CONFIGURATION')
  legacy=envfile(Path('/opt/greenmine/config/mail.env')).get('SMTP_PASSWORD','')
- if legacy and ''.join(c['SMTP_PASSWORD'].split())==''.join(legacy.split()):raise Gate('EXPOSED_LEGACY_PASSWORD_REFUSED')
+ if legacy and same_password(c['SMTP_PASSWORD'],legacy):raise Gate('EXPOSED_LEGACY_PASSWORD_REFUSED')
  return c
 def envfile(p):
  if not p.exists():return {}
  return dict(line.split('=',1) for line in p.read_text().splitlines() if '=' in line and not line.lstrip().startswith('#'))
+def same_password(a,b):return ''.join(a.strip().strip("'\"").split())==''.join(b.strip().strip("'\"").split())
 def jsonfile(path,value):path.write_text(json.dumps(value,indent=2)+'\n');os.chmod(path,0o600)
 def dbcopy(target):
  with sqlite3.connect(volume()/'accounts.sqlite3') as source,sqlite3.connect(target) as dest:
@@ -48,6 +49,9 @@ def same_business_data(baseline):
  with sqlite3.connect(baseline) as before,sqlite3.connect(volume()/'accounts.sqlite3') as after:
   for table in ['users','sessions','workspaces','imports','production_readings','import_sources']:
    columns=[r[1] for r in before.execute('PRAGMA table_info('+table+')')]
+   if table=='users' and 'active' not in columns:
+    current_columns=[r[1] for r in after.execute('PRAGMA table_info(users)')]
+    if 'active' in current_columns and after.execute('SELECT count(*) FROM users WHERE active!=1').fetchone()[0]:return False
    query='SELECT '+','.join(columns)+' FROM '+table+' ORDER BY '+','.join(str(i+1) for i in range(len(columns)))
    if before.execute(query).fetchall()!=after.execute(query).fetchall():return False
  return True
@@ -63,7 +67,7 @@ def bootstrap(path):
  e=envfile(path)
  if not e.get('SMTP_PASSWORD','').strip():raise Gate('FRESH_SMTP_PASSWORD_EMPTY')
  old=envfile(Path('/opt/greenmine/config/mail.env')).get('SMTP_PASSWORD','')
- if old and ''.join(old.split())==''.join(e['SMTP_PASSWORD'].split()):raise Gate('EXPOSED_LEGACY_PASSWORD_REFUSED')
+ if old and same_password(old,e['SMTP_PASSWORD']):raise Gate('EXPOSED_LEGACY_PASSWORD_REFUSED')
  required={'SMTP_HOST':'smtp.gmail.com','SMTP_PORT':'587','SMTP_TLS':'starttls','SMTP_USER':'mehrava.sharbati@gmail.com','SMTP_FROM':'mehrava.sharbati@gmail.com'}
  if any(e.get(k)!=v for k,v in required.items()):raise Gate('UNEXPECTED_MAIL_CONFIGURATION')
  folder=backup()

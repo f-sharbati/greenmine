@@ -30,5 +30,6 @@
     "staged_sample_routes": "byte-identical ZIP CSVs",
     "isolated_csv_forecast_scenarios": "passed with mocked email/weather; no production DB access"
   },
-  "authenticated_pdf_export": "pending after mail setup"
+  "authenticated_pdf_export": "pending after mail setup",
+  "deployment_guard_tests": 6
 }
