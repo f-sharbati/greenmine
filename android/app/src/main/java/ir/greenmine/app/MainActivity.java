@@ -14,12 +14,17 @@ import android.webkit.*;
 import android.widget.*;
 import org.json.JSONObject;
 import java.io.OutputStream;
+import java.io.InputStream;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.util.HashMap;
 import java.nio.charset.StandardCharsets;
 
 /** Android shell for the same Next.js app; predictions stay in the original Python backend. */
 public class MainActivity extends Activity {
     private static final int PICK_CSV = 20, SAVE_CSV = 21;
     private WebView web;
+    private WebViewClient mainClient;
     private WebView reportWeb;
     private LinearLayout errorPanel;
     private ProgressBar progress;
@@ -73,14 +78,27 @@ public class MainActivity extends Activity {
         settings.setAllowContentAccess(true); // Only user-selected Storage Access Framework CSV URIs.
         settings.setMixedContentMode(WebSettings.MIXED_CONTENT_NEVER_ALLOW);
         settings.setSupportMultipleWindows(false);
-        settings.setUserAgentString(settings.getUserAgentString()+" GreenMineAndroid/1.0");
+        settings.setUserAgentString(settings.getUserAgentString()+" GreenMineAndroid/"+BuildConfig.VERSION_NAME);
+        if(BuildConfig.BUNDLED_UI){
+            settings.setCacheMode(WebSettings.LOAD_DEFAULT);
+            String previous=getPreferences(MODE_PRIVATE).getString("ui_version","");
+            if(!BuildConfig.VERSION_NAME.equals(previous)){
+                web.clearCache(true);
+                getPreferences(MODE_PRIVATE).edit().putString("ui_version",BuildConfig.VERSION_NAME).apply();
+            }
+        }
         CookieManager.getInstance().setAcceptCookie(true);
         CookieManager.getInstance().setAcceptThirdPartyCookies(web,false);
         WebView.setWebContentsDebuggingEnabled(BuildConfig.DEBUG);
         web.setBackgroundColor(Color.rgb(226,233,242));
-        web.setWebViewClient(new WebViewClient() {
+        web.setWebViewClient(mainClient=new WebViewClient() {
+            @Override public WebResourceResponse shouldInterceptRequest(WebView view,WebResourceRequest request){return bundledResource(request);}
             @Override public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
                 Uri uri=request.getUrl();
+                if (trusted(uri) && uri.getPath()!=null && uri.getPath().startsWith("/downloads/")) {
+                    try {startActivity(new Intent(Intent.ACTION_VIEW,uri));} catch(ActivityNotFoundException ignored) {}
+                    return true;
+                }
                 if (trusted(uri)) return false;
                 if (request.isForMainFrame() && ("https".equals(uri.getScheme()) || "mailto".equals(uri.getScheme()))) {
                     try {startActivity(new Intent(Intent.ACTION_VIEW,uri));} catch(ActivityNotFoundException ignored) {}
@@ -130,7 +148,7 @@ public class MainActivity extends Activity {
             }
         });
         if(Build.VERSION.SDK_INT>=33) getOnBackInvokedDispatcher().registerOnBackInvokedCallback(android.window.OnBackInvokedDispatcher.PRIORITY_DEFAULT,this::handleBack);
-        if(state==null || web.restoreState(state)==null) web.loadUrl(BuildConfig.SERVER_URL+"/dashboard");
+        if(state==null || web.restoreState(state)==null) web.loadUrl(BuildConfig.SERVER_URL+(BuildConfig.BUNDLED_UI?"/":"/dashboard"));
     }
     private void openPdfReport(String html){
         reportWeb=new WebView(this);
@@ -138,6 +156,7 @@ public class MainActivity extends Activity {
         reportWeb.getSettings().setJavaScriptEnabled(false);
         reportWeb.setWebViewClient(new WebViewClient(){
             private boolean printed=false;
+            @Override public WebResourceResponse shouldInterceptRequest(WebView view,WebResourceRequest request){return bundledResource(request);}
             @Override public void onPageFinished(WebView view,String url){
                 if(printed)return;printed=true;
                 android.print.PrintManager manager=(android.print.PrintManager)getSystemService(PRINT_SERVICE);
@@ -153,6 +172,26 @@ public class MainActivity extends Activity {
         reportWeb.loadDataWithBaseURL(BuildConfig.SERVER_URL+"/",html,"text/html","UTF-8",null);
     }
     private int dp(int n){return Math.round(n*getResources().getDisplayMetrics().density);}
+    private WebResourceResponse bundledResource(WebResourceRequest request){
+        if(!BuildConfig.BUNDLED_UI||!trusted(request.getUrl())||!"GET".equals(request.getMethod()))return null;
+        Uri uri=request.getUrl();String path=uri.getPath();
+        if(path==null||path.startsWith("/api/"))return null;
+        if(path.contains("..")||path.indexOf('\0')>=0)return missingResource();
+        String asset;
+        if("/".equals(path)||"/dashboard".equals(path)||"/dashboard/".equals(path)||"/download".equals(path)||"/download/".equals(path)){
+            asset="_pages/"+(path.startsWith("/dashboard")?"dashboard":path.startsWith("/download")?"download":"index")+(uri.getQueryParameter("_rsc")!=null?".rsc":".html");
+        }else asset=path.startsWith("/")?path.substring(1):path;
+        try{
+            InputStream body=getAssets().open("web/"+asset);
+            String mime=asset.endsWith(".html")?"text/html":asset.endsWith(".rsc")?"text/x-component":asset.endsWith(".js")?"application/javascript":asset.endsWith(".css")?"text/css":asset.endsWith(".woff")?"font/woff":asset.endsWith(".woff2")?"font/woff2":asset.endsWith(".svg")?"image/svg+xml":asset.endsWith(".png")?"image/png":asset.endsWith(".json")?"application/json":"application/octet-stream";
+            HashMap<String,String> headers=new HashMap<>();headers.put("Cache-Control","no-store");headers.put("X-GreenMine-UI",BuildConfig.VERSION_NAME);
+            return new WebResourceResponse(mime,mime.startsWith("text/")||mime.contains("javascript")?"UTF-8":null,200,"OK",headers,body);
+        }catch(IOException ignored){
+            if(path.startsWith("/_next/")||path.startsWith("/images/")||path.startsWith("/fonts/"))return missingResource();
+            return null;
+        }
+    }
+    private WebResourceResponse missingResource(){return new WebResourceResponse("text/plain","UTF-8",404,"Not Found",new HashMap<>(),new ByteArrayInputStream(new byte[0]));}
     private boolean trusted(Uri uri) {
         return server.getScheme()!=null && server.getScheme().equals(uri.getScheme()) && server.getHost()!=null && server.getHost().equals(uri.getHost()) && server.getPort()==uri.getPort();
     }
@@ -174,6 +213,8 @@ public class MainActivity extends Activity {
         }
     }
     WebView testWebView(){return web;}
+    WebResourceResponse testBundledResource(WebResourceRequest request){return bundledResource(request);}
+    void testRestoreClient(){web.setWebViewClient(mainClient);}
     @Override protected void onPause(){CookieManager.getInstance().flush();super.onPause();}
     @Override protected void onDestroy(){if(pendingFile!=null)pendingFile.onReceiveValue(null);if(reportWeb!=null){reportWeb.destroy();reportWeb=null;}web.destroy();super.onDestroy();}
 }

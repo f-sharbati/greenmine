@@ -20,8 +20,80 @@ public class DeviceSmokeTest extends Instrumentation {
         Bundle result=new Bundle();
         try {
             activity=(MainActivity)startActivitySync(new Intent(getTargetContext(),MainActivity.class).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
+            for(int tick=0;tick<100;tick++){
+                final java.util.concurrent.atomic.AtomicInteger progress=new java.util.concurrent.atomic.AtomicInteger();
+                runOnMainSync(()->progress.set(activity.testWebView().getProgress()));
+                if(progress.get()==100)break;Thread.sleep(100);
+            }
             await("document.querySelector('.header')!==null",30);
             require("location.origin==="+org.json.JSONObject.quote(BuildConfig.SERVER_URL),"Expected backend origin");
+            if(BuildConfig.BUNDLED_UI){
+                await("document.querySelector('.hero')!==null",20);
+                if(js("document.documentElement.lang").equals("\"en\""))click(".language");
+                require("document.querySelector('.hero-scene').src.includes('solar-minimal-wide')","Landing uses bundled wide image");
+                await("document.querySelector('.hero-scene').naturalWidth>0",10);
+                runOnMainSync(()->activity.testWebView().getSettings().setUseWideViewPort(true));
+                for(int width:new int[]{320,360,390,430}){
+                    js("document.querySelector('meta[name=viewport]').content='width="+width+"';true");Thread.sleep(350);
+                    require("document.documentElement.scrollWidth<=innerWidth+1","Bundled landing fits "+width);
+                    require("(()=>{const a=document.querySelector('.hero-copy').getBoundingClientRect(),b=document.querySelector('.hero-impact').getBoundingClientRect();return b.top>=a.bottom-1})()","Bundled hero does not overlap at "+width);
+                }
+                js("document.querySelector('meta[name=viewport]').content='width=device-width, initial-scale=1';true");
+                runOnMainSync(()->activity.testWebView().getSettings().setUseWideViewPort(false));capture("bundled-landing-fa.png");
+                runOnMainSync(()->activity.testWebView().loadUrl(BuildConfig.SERVER_URL+"/download"));Thread.sleep(1200);
+                await("document.querySelector('.download-card')!==null",20);
+                require("document.querySelector('.download-card a[download]').getAttribute('href')==='/downloads/GreenMine-1.4.2.apk'","Latest APK download link");
+                require("document.documentElement.scrollWidth<=innerWidth+1","Download page fits phone");capture("download-page-fa.png");
+                final byte[] fixture=getContext().getAssets().open("layout-overview.json").readAllBytes();
+                runOnMainSync(()->activity.testWebView().setWebViewClient(new android.webkit.WebViewClient(){
+                    @Override public android.webkit.WebResourceResponse shouldInterceptRequest(android.webkit.WebView view,android.webkit.WebResourceRequest req){
+                        if(req.getUrl().getPath().equals("/api/auth"))return new android.webkit.WebResourceResponse("application/json","UTF-8",new java.io.ByteArrayInputStream("{\"user\":{\"id\":-1,\"email\":\"layout-test@example.org\"},\"auth_email_available\":true}".getBytes(java.nio.charset.StandardCharsets.UTF_8)));
+                        if(req.getUrl().getPath().equals("/api/engine"))return new android.webkit.WebResourceResponse("application/json","UTF-8",new java.io.ByteArrayInputStream(fixture));
+                        return activity.testBundledResource(req);
+                    }
+                }));
+                runOnMainSync(()->activity.testWebView().loadUrl(BuildConfig.SERVER_URL+"/dashboard"));Thread.sleep(1200);
+                await("document.querySelector('.overview-metrics')!==null",20);
+                await("document.querySelector('.workspace-actions button:disabled')===null",20);
+                require("document.querySelector('.plant-scene>img').src.includes('solar-minimal-wide')","Dashboard uses new wide image");
+                await("document.querySelector('.plant-scene>img').naturalWidth>0",10);
+                require("document.querySelector('.overview-metrics').getBoundingClientRect().top>=document.querySelector('.plant-scene').getBoundingClientRect().bottom+8","Mobile photo and instrument cards have positive spacing");
+                require("document.documentElement.scrollWidth<=innerWidth+1","Bundled dashboard fits phone");
+                js("document.querySelector('.plant-scene').scrollIntoView({block:'start'});true");capture("bundled-dashboard-fa.png");
+                click(".setting-button");await("document.querySelector('.leaflet-container')!==null",15);
+                require("document.querySelector('.calibration-options select')===null && document.querySelector('[data-pilot-preset]')===null","Pilot selector removed");
+                js("document.querySelector('.location-map').scrollIntoView({block:'center'});true");
+                js("(()=>{const el=document.querySelector('.location-map'),r=el.getBoundingClientRect();el.dispatchEvent(new MouseEvent('click',{bubbles:true,clientX:r.left+r.width*.6,clientY:r.top+r.height*.5}));return true})()");
+                await("document.querySelector('.plant-map-pin')!==null",10);
+                require("[...document.querySelectorAll('.plant-location input[type=number]')].every(e=>e.value!=='' && e.checkValidity())","Map sets valid coordinates");
+                await("[...document.querySelectorAll('.leaflet-tile')].some(i=>i.naturalWidth>0)",45);capture("plant-map-fa.png");
+                js("window._beforeCoords=[...document.querySelectorAll('.plant-location input[type=number]')].map(e=>e.value).join(',');true");
+                dragMap();
+
+                await("[...document.querySelectorAll('.plant-location input[type=number]')].map(e=>e.value).join(',')!==window._beforeCoords",10);
+                require("(()=>{const m=document.querySelector('.location-map').getBoundingClientRect(),p=document.querySelector('.plant-map-pin').getBoundingClientRect();return Math.abs((p.left+p.width/2)-(m.left+m.width/2))<2 && Math.abs((p.top+p.height/2)-(m.top+m.height/2))<2})()","Pin stays centered after map drag");
+                js("window._tileZoom=()=>Math.max(...[...document.querySelectorAll('.leaflet-tile')].map(i=>Number(new URL(i.src).pathname.split('/')[1])));window._beforeZoom=window._tileZoom();(()=>{const el=document.querySelector('.location-map'),r=el.getBoundingClientRect();el.dispatchEvent(new WheelEvent('wheel',{bubbles:true,cancelable:true,deltaY:-120,clientX:r.left+r.width/2,clientY:r.top+r.height/2}));return true})()");
+                await("window._tileZoom()>window._beforeZoom",10);
+                click(".dialog-close");
+                js("window._promptOriginal=window.prompt;window.prompt=(name,data)=>{window._exportCapture={name,data:JSON.parse(data)};return 'opened'};true");
+                click(".workspace-actions .button.outline");click(".export-options .button.outline");
+                require("window._exportCapture.data.filename==='greenmine-overview.csv' && window._exportCapture.data.csv.includes('CO')","Overview CSV contains carbon offset");
+                click("[role=tab][id$=trigger-impact]");click(".workspace-actions .button.outline");click(".export-options .button.dark");
+                require("window._exportCapture.name==='greenmine:print' && window._exportCapture.data.html.includes('VCT')","Carbon PDF uses impact columns");
+                click("[role=tab][id$=trigger-forecast]");click(".workspace-actions .button.outline");
+                require("[...document.querySelectorAll('.export-options button')].every(e=>e.disabled)","Empty forecast cannot export readings");click(".dialog-close");
+                js("window.prompt=window._promptOriginal;true");
+                click("[role=tab][id$=trigger-overview]");await("document.querySelector('.overview-metrics')!==null",10);
+                click(".theme-toggle");await("!document.querySelector('.theme-toggle').disabled",10);capture("bundled-dashboard-dark.png");
+                runOnMainSync(()->activity.testWebView().getSettings().setUseWideViewPort(true));
+                js("document.querySelector('meta[name=viewport]').content='width=1280';true");Thread.sleep(800);
+                require("getComputedStyle(document.querySelector('.overview-grid')).backgroundImage.includes('solar-minimal-wide')","Desktop full overview uses wide image");
+                require("getComputedStyle(document.querySelector('.overview-metrics')).gridTemplateColumns.split(' ').length===3","Desktop instrument layout preserved");
+                capture("bundled-dashboard-desktop.png");
+                runOnMainSync(()->{activity.testRestoreClient();activity.testWebView().getSettings().setUseWideViewPort(false);activity.testWebView().loadUrl(BuildConfig.SERVER_URL+"/");});
+                result.putString("stream","PASS: APK-bundled current landing and dashboard; new wide image loaded; no mobile overlap at 320/360/390/430px; three-column desktop instruments; FA and dark theme. Dashboard uses test-only fixture responses, no production accounts or data changed. Real API remains HTTPS server.\n");
+                finish(Activity.RESULT_OK,result);return;
+            }
             if(authUi){
                 await("document.querySelector('.auth-card')!==null||document.querySelector('.profile-button')!==null",60);
                 require("document.querySelector('.auth-card')!==null","Auth form is visible; existing signed-in sessions are not modified");
@@ -125,12 +197,12 @@ public class DeviceSmokeTest extends Instrumentation {
             result.putString("stream","PASS: visible PDF export, Persian sign-out text, contained landing CTA, mobile card separation, wide solar image, localized dates and numbers, live forecast, save-and-forecast form, FA/EN landing, 320/360/390/430/768px layouts, non-overlapping hero, theme, authenticated backend, persisted CSV and sessions, logout, mobile/desktop dashboard layouts. Local disposable accounts only.\n");
             result.putString("stream",result.getString("stream")+"Theme rAF sample (development WebView): "+result.getString("frame_timing")+"\n");
             finish(Activity.RESULT_OK,result);
-        }catch(Throwable error){result.putString("stream","FAIL: "+error.toString()+"\n");finish(Activity.RESULT_CANCELED,result);}
+        }catch(Throwable error){try{capture("bundled-failure.png");}catch(Exception ignored){}result.putString("stream","FAIL: "+error.toString()+"\n");finish(Activity.RESULT_CANCELED,result);}
     }
     private String js(String script) throws Exception {
         CountDownLatch latch=new CountDownLatch(1);AtomicReference<String> value=new AtomicReference<>();
         runOnMainSync(()->activity.testWebView().evaluateJavascript(script,r->{value.set(r);latch.countDown();}));
-        if(!latch.await(10,TimeUnit.SECONDS))throw new AssertionError("JavaScript callback timed out");
+        if(!latch.await(10,TimeUnit.SECONDS))throw new AssertionError("JavaScript callback timed out: "+script.substring(0,Math.min(script.length(),140)));
         return value.get();
     }
     private void require(String predicate,String label)throws Exception{if(!"true".equals(js(predicate)))throw new AssertionError(label);}
@@ -145,6 +217,17 @@ public class DeviceSmokeTest extends Instrumentation {
         android.view.MotionEvent down=android.view.MotionEvent.obtain(now,now,android.view.MotionEvent.ACTION_DOWN,x,y,0);
         android.view.MotionEvent up=android.view.MotionEvent.obtain(now,now+70,android.view.MotionEvent.ACTION_UP,x,y,0);
         sendPointerSync(down);sendPointerSync(up);down.recycle();up.recycle();
+    }
+    private void dragMap()throws Exception{
+        String raw=js("(()=>{const r=document.querySelector('.location-map').getBoundingClientRect();return [r.left+r.width*.35,r.top+r.height*.4]})()");
+        org.json.JSONArray xy=new org.json.JSONArray(raw);int[] origin=new int[2];float[] scale=new float[1];
+        runOnMainSync(()->{activity.testWebView().getLocationOnScreen(origin);scale[0]=activity.testWebView().getScale();});
+        float x=origin[0]+(float)xy.getDouble(0)*scale[0],y=origin[1]+(float)xy.getDouble(1)*scale[0];long down=android.os.SystemClock.uptimeMillis();
+        for(int i=0;i<=14;i++){
+            int action=i==0?android.view.MotionEvent.ACTION_DOWN:i==14?android.view.MotionEvent.ACTION_UP:android.view.MotionEvent.ACTION_MOVE;
+            android.view.MotionEvent event=android.view.MotionEvent.obtain(down,android.os.SystemClock.uptimeMillis(),action,x+i*5*scale[0],y+i*2*scale[0],0);
+            sendPointerSync(event);event.recycle();Thread.sleep(20);
+        }
     }
     private void awaitPicker()throws Exception{
         long until=System.currentTimeMillis()+10000;

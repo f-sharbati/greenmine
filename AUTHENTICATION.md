@@ -71,9 +71,3 @@ No real SMTP password was provided in this task. Real Gmail delivery remains a s
 Backend tests cover the complete flow, old-schema migration, legacy hash upgrade, attempts/expiry, resends, browser binding, cross-account isolation, concurrent use, SMTP errors, password changes, and recovery. Existing backend fixtures use test-only mocks to complete verification; there is no runtime bypass flag or production test-code endpoint.
 
 The Android instrumentation defaults to the new auth UI smoke path. Full OTP delivery requires configured SMTP and an operator-controlled test mailbox; it is not silently bypassed by the old password-only registration harness.
-
-## Operator-selected temporary password mode
-
-The owner authorized email-and-password access while fresh SMTP is being prepared. Set GREENMINE_AUTH_MODE=password explicitly to use this temporary mode. New signups still validate the CAPTCHA and matching passwords, use the same versioned PBKDF2 KDF, start empty and active, and receive an authenticated session. Existing inactive accounts are not silently activated. Rate limits, browser context, HTTPS, cookie controls and ownership checks remain enforced.
-
-The default is GREENMINE_AUTH_MODE=email_otp. An absent or failing mail service never changes that mode or grants a password-only session. Once fresh SMTP is configured and authenticated, restart the same image with GREENMINE_AUTH_MODE=email_otp and verify live email delivery. Existing sessions and data are retained. Email recovery still requires configured SMTP in either mode. There is no date-based switch or client-controlled authentication override.

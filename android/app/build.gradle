@@ -10,32 +10,58 @@ if (serverUrl && !(serverUrl ==~ /https:\/\/[A-Za-z0-9.-]+(:[0-9]+)?(\/[A-Za-z0-
 android {
     namespace 'ir.greenmine.app'
     compileSdk 35
+    androidResources {
+        // Next.js uses _next and _pages; AAPT's default underscore ignore rule
+        // otherwise drops the packaged HTML and JavaScript directories.
+        ignoreAssetsPattern = '!.svn:!.git:!.ds_store:!*.scc:.*'
+    }
     defaultConfig {
         applicationId 'ir.greenmine.app'
         minSdk 26
         targetSdk 35
-        versionCode 6
-        versionName '1.3.1'
+        versionCode 9
+        versionName '1.4.2'
         testInstrumentationRunner 'ir.greenmine.app.DeviceSmokeTest'
     }
     buildFeatures { buildConfig true }
     buildTypes {
         debug {
             applicationIdSuffix localBackend && previewIdentity ? '.preview' : '.debug'
-            versionNameSuffix localBackend ? '-preview' : '-connected'
+            versionNameSuffix localBackend ? '-preview' : '-bundled'
             manifestPlaceholders = [appLabel: localBackend && previewIdentity ? 'GreenMine Preview' : 'GreenMine']
             buildConfigField 'String', 'SERVER_URL', '"' + (localBackend ? 'http://localhost:3000' : serverUrl) + '"'
+            buildConfigField 'boolean', 'BUNDLED_UI', localBackend ? 'false' : 'true'
         }
         release {
             minifyEnabled false
             manifestPlaceholders = [appLabel: 'GreenMine']
             buildConfigField 'String', 'SERVER_URL', '"' + serverUrl + '"'
+            buildConfigField 'boolean', 'BUNDLED_UI', 'true'
         }
     }
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_17
         targetCompatibility JavaVersion.VERSION_17
     }
+}
+
+if (!localBackend) {
+    def projectWeb = rootProject.projectDir.parentFile
+    def generatedAssets = layout.buildDirectory.dir('generated/webUiAssets')
+    android.sourceSets.main.assets.srcDir(generatedAssets)
+    def bundleUi = tasks.register('bundleWebUi', Sync) {
+        into generatedAssets.map { it.dir('web') }
+        from(new File(projectWeb, '.next/static')) { into '_next/static' }
+        from(new File(projectWeb, 'public')) { exclude 'downloads/**' }
+        from(new File(projectWeb, '.next/server/app')) {
+            include 'index.html', 'dashboard.html', 'index.rsc', 'dashboard.rsc', 'download.html', 'download.rsc'
+            into '_pages'
+        }
+        doFirst {
+            if (!new File(projectWeb, '.next/BUILD_ID').exists()) throw new GradleException('Run npm run build before building the bundled Android app.')
+        }
+    }
+    tasks.named('preBuild').configure { dependsOn bundleUi }
 }
 
 tasks.configureEach { task ->

@@ -1,12 +1,9 @@
 'use client';
 import type {Plant} from '../lib/plant';
-export function CalibrationOptions({plant,onChange,rebase,onRebase,lang}:{plant:Plant;onChange:(p:Plant)=>void;rebase:boolean;onRebase:(v:boolean)=>void;lang:'fa'|'en'}){
+export function CalibrationOptions({rebase,onRebase,lang}:{plant:Plant;onChange:(p:Plant)=>void;rebase:boolean;onRebase:(v:boolean)=>void;lang:'fa'|'en'}){
  const t=(en:string,fa:string)=>lang==='fa'?fa:en;
- return <section className="calibration-options"><h3>{t('Calibration and measured configuration','کالیبراسیون و مشخصات اندازه‌گیری‌شده')}</h3>
- <label>{t('Reference profile','پروفایل مرجع')}<select value={plant.calibration_profile||'none'} onChange={e=>onChange({...plant,calibration_profile:e.target.value as Plant['calibration_profile']})}><option value="none">{t('Physical model + my production history','مدل فیزیکی و سوابق تولید من')}</option><option value="tehran_kaco_11_4">{t('Tehran KACO pilot: fitted to 2025 measurements','پایلوت کاکو تهران: برازش با اندازه‌گیری ۲۰۲۵')}</option></select></label>
- <button data-pilot-preset className="button outline" type="button" onClick={()=>{onChange({...plant,name:t('Tehran KACO pilot','پایلوت کاکو تهران'),capacity_dc:11.4,capacity_ac:15,tilt:30,azimuth:180,performance_ratio:.8,mount_type:'Fixed',panel_type:'Monocrystalline',location_mode:'gps',latitude:35.756256,longitude:51.431395,location_name:t('Tehran — approximate pilot coordinates','تهران — مختصات تقریبی پایلوت'),forecast_mode:'history_calibrated',calibration_profile:'tehran_kaco_11_4'});onRebase(true);}}>{t('Load confirmed 11.4 kW pilot settings','بارگذاری مشخصات تأییدشده پایلوت ۱۱٫۴ کیلوواتی')}</button>
- <p className="fine-print">{t('The pilot profile uses 20,637 kWh in 2025 and 892.209 kWh in Azar 1404. It is specific to this measured site. The built-in August/September reference files are used only when your account has no readings.','پروفایل پایلوت از تولید سال ۲۰۲۵ برابر ۲۰،۶۳۷ و آذر ۱۴۰۴ برابر ۸۹۲٫۲۰۹ کیلووات‌ساعت استفاده می‌کند و مخصوص همین نیروگاه است. فایل‌های مرجع اوت و سپتامبر فقط وقتی استفاده می‌شوند که حساب سابقه تولید ندارد.')}</p>
- {plant.calibration_profile!=='tehran_kaco_11_4'&&<label className="plant-history-option"><input type="checkbox" checked={rebase} onChange={e=>onRebase(e.target.checked)}/>{t('These are the settings that produced my imported readings','این مشخصات مربوط به نیروگاهی است که سوابق واردشده را تولید کرده است')}</label>}
- <p className="fine-print">{t('Keep the measured configuration fixed when exploring changes. Otherwise fitting the old readings to each scenario could cancel the effect of changing capacity or orientation.','برای بررسی تغییرات، مشخصات مرجع اندازه‌گیری‌شده را ثابت نگه دارید؛ برازش دوباره سوابق به هر سناریو می‌تواند اثر تغییر ظرفیت و جهت را خنثی کند.')}</p>
- </section>;
+ return <section className="calibration-options"><h3>{t('Measured configuration','مشخصات اندازه‌گیری‌شده')}</h3>
+ <p>{t('Physical model + your production history','مدل فیزیکی و سوابق تولید شما')}</p>
+ <label className="plant-history-option"><input type="checkbox" checked={rebase} onChange={e=>onRebase(e.target.checked)}/>{t('These are the settings that produced my imported readings','این مشخصات مربوط به نیروگاهی است که سوابق واردشده را تولید کرده است')}</label>
+ <p className="fine-print">{t('Keep the measured configuration fixed when exploring changes, so changing capacity or orientation remains visible.','هنگام بررسی تغییرات، مشخصات مرجع اندازه‌گیری‌شده را ثابت نگه دارید تا اثر تغییر ظرفیت یا جهت قابل مشاهده باشد.')}</p></section>;
 }
