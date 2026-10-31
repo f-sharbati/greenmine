@@ -4,7 +4,7 @@ from datetime import datetime,timezone
 from pathlib import Path
 os.umask(0o077)
 IMAGE='greenmine:auth-password-20261031'
-IMAGE_ID='BUILD_PENDING'
+IMAGE_ID='sha256:4695f5ce45e86434528b34dc5ec15b170ce8c69a41475e01aacc744035953d99'
 VOLUME='greenmine_accounts'
 ADMIN='fazi.sharbati@gmail.com'
 class Gate(Exception):pass
