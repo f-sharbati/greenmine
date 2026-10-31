@@ -14,5 +14,11 @@
   "fresh_smtp": "required; previous credential is not reused",
   "live_otp_delivery": "pending",
   "android_native_rebuild": "not required by supplied release",
-  "issue": "https://github.com/f-sharbati/greenmine/issues/5"
+  "issue": "https://github.com/f-sharbati/greenmine/issues/5",
+  "backend_tests_container": 95,
+  "production_build_vps": "passed",
+  "runtime_manifest_files_matched": 87,
+  "candidate_image_id": "sha256:3fb5583ead0501cae621b4e1dc8f026e1363b4373d7f52139a9fc4a704aa11d1",
+  "readiness": "passed; HTTPS cookie flags, CAPTCHA image, unauthorized engine and cross-origin rejection checked without sending mail",
+  "source_commit": "01ab5fe409e012e740237bbfd1377dcaf1d0f6a5"
 }
