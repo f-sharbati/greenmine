@@ -17,6 +17,7 @@ export async function GET(request:Request){
  }
  const p=await service({op:'me',token:jar.get('greenmine_session')?.value});
  const status=await service({op:'auth_status'});
+ p.data.auth_mode=status.data.auth_mode;
  p.data.auth_email_available=Boolean(status.data.auth_email_available);
  p.data.recovery_available=Boolean(status.data.auth_email_available);
  return Response.json(p.data,{status:p.status,headers});

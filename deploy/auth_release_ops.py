@@ -3,8 +3,8 @@ import argparse,json,os,shutil,sqlite3,subprocess,sys,tarfile,time,urllib.reques
 from datetime import datetime,timezone
 from pathlib import Path
 os.umask(0o077)
-IMAGE='greenmine:auth-20261031-6f216e03'
-IMAGE_ID='sha256:3fb5583ead0501cae621b4e1dc8f026e1363b4373d7f52139a9fc4a704aa11d1'
+IMAGE='greenmine:auth-password-20261031'
+IMAGE_ID='sha256:4695f5ce45e86434528b34dc5ec15b170ce8c69a41475e01aacc744035953d99'
 VOLUME='greenmine_accounts'
 ADMIN='fazi.sharbati@gmail.com'
 class Gate(Exception):pass
@@ -87,11 +87,14 @@ def rollback(folder):
   command('docker','rename','greenmine-app','greenmine-app-auth-failed-'+str(int(time.time())))
  command('docker','rename',old,'greenmine-app');command('docker','start','greenmine-app')
  print('PREVIOUS_CONTAINER_RESTORED_DATABASE_NOT_REPLACED')
-def promote():
- image_check();config();smtp_auth();current=inspect('greenmine-app')
- if not current or current['Config']['Image']!='greenmine:8ff0556':raise Gate('PRODUCTION_BASELINE_CHANGED_REINSPECT_FIRST')
+def promote(auth_mode='email_otp'):
+ image_check()
+ if auth_mode not in ('email_otp','password'):raise Gate('INVALID_AUTH_MODE')
+ if auth_mode=='email_otp':config();smtp_auth()
+ current=inspect('greenmine-app')
+ if not current or current['Config']['Image'] not in ('greenmine:8ff0556',IMAGE):raise Gate('PRODUCTION_BASELINE_CHANGED_REINSPECT_FIRST')
  folder=backup();env=dict(x.split('=',1) for x in current['Config']['Env'])
- env.update(APP_ORIGIN='https://greenmineapp.ir',GREENMINE_DATA_DIR='/data',GREENMINE_PYTHON_ROOT='/opt/greenmine/python',PYTHON_EXECUTABLE='/opt/venv/bin/python',GREENMINE_ADMIN_EMAIL=ADMIN,SMTP_REQUIRE_SETUP='1',SMTP_PASSWORD='')
+ env.update(APP_ORIGIN='https://greenmineapp.ir',GREENMINE_DATA_DIR='/data',GREENMINE_PYTHON_ROOT='/opt/greenmine/python',PYTHON_EXECUTABLE='/opt/venv/bin/python',GREENMINE_ADMIN_EMAIL=ADMIN,SMTP_REQUIRE_SETUP='1',SMTP_PASSWORD='',GREENMINE_AUTH_MODE=auth_mode)
  if any('\n' in v for v in env.values()):raise Gate('MULTILINE_PRIVATE_ENV_REQUIRES_MANUAL_PRESERVATION')
  private=folder/'runtime-private.env';private.write_text(''.join(k+'='+v+'\n' for k,v in env.items()));os.chmod(private,0o600)
  old='greenmine-app-pre-auth-'+str(int(time.time()));jsonfile(folder/'promotion-state.json',{'previous_container':old,'candidate_image_id':IMAGE_ID})
@@ -108,14 +111,16 @@ def promote():
    if ready:break
    time.sleep(1)
   if not ready:raise Gate('NEW_SERVICE_NOT_READY')
-  command('python3','/opt/greenmine/releases/auth-20261031-6f216e03/deploy-smoke.py','--base','http://127.0.0.1:3001','--origin','https://greenmineapp.ir','--require-mail')
+  smoke=['python3','/opt/greenmine/releases/auth-password-20261031/deploy-smoke.py','--base','http://127.0.0.1:3001','--origin','https://greenmineapp.ir','--auth-mode',auth_mode]
+  if auth_mode=='email_otp':smoke.append('--require-mail')
+  command(*smoke)
  except Exception:
   rollback(folder);raise Gate('PROMOTION_FAILED_PREVIOUS_CONTAINER_RESTORED')
- print(json.dumps({'promotion':'running_pending_public_otp_acceptance','backup':str(folder),'rollback_container':old,'image_id':IMAGE_ID}))
+ print(json.dumps({'promotion':'running_pending_public_acceptance','auth_mode':auth_mode,'backup':str(folder),'rollback_container':old,'image_id':IMAGE_ID}))
 def main():
- p=argparse.ArgumentParser();g=p.add_mutually_exclusive_group();g.add_argument('--inspect',action='store_true');g.add_argument('--bootstrap-mail',type=Path);g.add_argument('--promote',action='store_true');g.add_argument('--rollback',type=Path,metavar='BACKUP_DIRECTORY');a=p.parse_args()
+ p=argparse.ArgumentParser();g=p.add_mutually_exclusive_group();g.add_argument('--inspect',action='store_true');g.add_argument('--bootstrap-mail',type=Path);g.add_argument('--promote',action='store_true');g.add_argument('--rollback',type=Path,metavar='BACKUP_DIRECTORY');p.add_argument('--auth-mode',choices=['email_otp','password'],default='email_otp');a=p.parse_args()
  if a.bootstrap_mail:bootstrap(a.bootstrap_mail)
- elif a.promote:promote()
+ elif a.promote:promote(a.auth_mode)
  elif a.rollback:rollback(a.rollback)
  else:
   image_check();current=inspect('greenmine-app')
