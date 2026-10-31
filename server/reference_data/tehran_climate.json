@@ -1,0 +1,20 @@
+{
+  "values": {
+    "JAN": 2.7142,
+    "FEB": 3.5107,
+    "MAR": 4.6918,
+    "APR": 5.6738,
+    "MAY": 6.9542,
+    "JUN": 8.0153,
+    "JUL": 7.6253,
+    "AUG": 7.1381,
+    "SEP": 6.0204,
+    "OCT": 4.421,
+    "NOV": 2.9712,
+    "DEC": 2.4504
+  },
+  "source": "NASA POWER long-term climatology",
+  "latitude": 35.75625577683599,
+  "longitude": 51.431394829419425,
+  "fetched_at": 1793444775.8068342
+}

@@ -1,0 +1,12 @@
+const ts=require('typescript');
+const fs=require('fs');
+const assert=require('node:assert/strict');
+const compiled=ts.transpileModule(fs.readFileSync('lib/format.ts','utf8'),{compilerOptions:{module:ts.ModuleKind.CommonJS}}).outputText;
+const api={};new Function('exports',compiled)(api);
+assert.equal(api.formatNumber(1254.8,'fa'), '۱،۲۵۴.۸');
+assert.equal(api.formatNumber(1405,'fa',0,false), '۱۴۰۵');
+assert.equal(api.formatNumber(1254.8,'en'), '1,254.8');
+assert.match(api.formatDate('2026-10-31','fa'),/۱۴۰۵/);
+assert.ok(!api.formatDate('2026-10-31','fa').includes('2026'));
+assert.equal(api.formatDate('bad-date','fa'),'—');
+console.log('PASS: Persian grouping, decimal, year, calendar and English formatting');

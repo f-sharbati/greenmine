@@ -1,0 +1,668 @@
+{
+  "release": "email-activation-and-login-otp",
+  "prepared_date": "2026-10-31",
+  "android_shell": "1.3.1 (no replacement required)",
+  "auth_flow": "registration activation; password then login email OTP",
+  "password_kdf": "PBKDF2-HMAC-SHA-256 / 600000 iterations",
+  "smtp_bootstrap_required": true,
+  "backend_tests": 95,
+  "origin": "https://greenmineapp.ir",
+  "layout": "Next.js at root; original Python project in python/",
+  "files": [
+    {
+      "path": ".env.example",
+      "sha256": "df4fce47801a6cae2e8abc615f96c9d2df2cc37faf1db1a9876dcec1a24bd5a1",
+      "bytes": 398
+    },
+    {
+      "path": ".env.production.example",
+      "sha256": "a5ac9fa20c6f94215f8f2ec6eccdb8d33622c9c828f75dd4122bdfed7b2ceac8",
+      "bytes": 426
+    },
+    {
+      "path": ".gitignore",
+      "sha256": "1f9ca41862bdff06d0feedfcc6e07b0d066e4f6c8523b256816a66cf16d2bc1e",
+      "bytes": 710
+    },
+    {
+      "path": "AGENTS.md",
+      "sha256": "d273860cb120cdc0c127d565b196d6846274ad3933d5848932659c2a0b193898",
+      "bytes": 688
+    },
+    {
+      "path": "AUTHENTICATION.md",
+      "sha256": "565d7f91f81d8703e9f8644e61510251e50402999811a1c7e793f7a146577d6f",
+      "bytes": 7154
+    },
+    {
+      "path": "BACKEND_HANDOFF.md",
+      "sha256": "d72a8a73bbc2491e3e8be43243b37024d0bf379063ae690d648ea603015cc157",
+      "bytes": 1932
+    },
+    {
+      "path": "DEPLOYMENT.md",
+      "sha256": "3b014b8953773da52dd466b9990cc0160b7842c791b7a20f8e8b6ec8fa3412d6",
+      "bytes": 6180
+    },
+    {
+      "path": "DESIGN.md",
+      "sha256": "c910bfb4d1cf715a8f67fc2e24291671f3e2be8e63328a09c1496ea171dce62d",
+      "bytes": 5356
+    },
+    {
+      "path": "INTEGRATION.md",
+      "sha256": "22f52a076ebfaa9d168103a6e9c4b878977e1d7db2981d9ecc85c7394ac3b40c",
+      "bytes": 4177
+    },
+    {
+      "path": "next-env.d.ts",
+      "sha256": "1862ac4bbbc5192d4bf562161df66ea547ed3e67173100656ab606ae9797db2b",
+      "bytes": 288
+    },
+    {
+      "path": "next.config.ts",
+      "sha256": "58ec7b46c58c93b288e921b8fee8db662a5ba6013bae64597bf5b386a98bc7b0",
+      "bytes": 287
+    },
+    {
+      "path": "package-lock.json",
+      "sha256": "dafa193da1e01e11f5a25b04155cc5e7dfbb69793e96ab0ce2741515bb581044",
+      "bytes": 58856
+    },
+    {
+      "path": "package.json",
+      "sha256": "352eb0b43d3f574ed58facbef9bbc439214a030015302777d4848866efc0cc15",
+      "bytes": 609
+    },
+    {
+      "path": "PREDICTION_NOTES.md",
+      "sha256": "d7896d46b9328b03dc92abfb193f98d011c3dabe9c1f38bb7d47c22ad612d3c2",
+      "bytes": 8848
+    },
+    {
+      "path": "PRODUCTION_UPSTREAM.md",
+      "sha256": "2f4212b1d918c3bb73fbba94f8054c8e2481c8d37b576d4e9498a567d7f42704",
+      "bytes": 11058
+    },
+    {
+      "path": "README.md",
+      "sha256": "edeb01e325183c86d13baf89ba7f687ed73ad7433fa678da6cc23d6e828901ad",
+      "bytes": 1932
+    },
+    {
+      "path": "tsconfig.json",
+      "sha256": "fbff01604d6cb54694be707f26e7a0eb21a6ef796b888c6a1dab1839fa7c6ccc",
+      "bytes": 700
+    },
+    {
+      "path": "tsconfig.tsbuildinfo",
+      "sha256": "85fb9b0cc844cd818068e8670c4e4dd66ae277c7fb356a1ff8192bbbbdb39eb7",
+      "bytes": 113762
+    },
+    {
+      "path": "UI_UPDATE.md",
+      "sha256": "3b69c8751f529aec2b8558d7c842be9860a8b8600b56887721b5efbf618e1197",
+      "bytes": 10142
+    },
+    {
+      "path": "android/.gitignore",
+      "sha256": "466e814a4233f52d9e7a17be6a2f20dad442216d4566cd4c8b6db0f432bff40b",
+      "bytes": 54
+    },
+    {
+      "path": "android/build.gradle",
+      "sha256": "db71a9fcdf0af8eb4ab85ad24de5f27004e45b333cbf4296a4caa94a69e36029",
+      "bytes": 71
+    },
+    {
+      "path": "android/gradle.properties",
+      "sha256": "da517e54b79a4306a7073180fef190b657fdf012690eabbd86262470ce7eb463",
+      "bytes": 117
+    },
+    {
+      "path": "android/gradlew",
+      "sha256": "5901fd800994ef6b176e86345b1c980ea8918e1c557e06967fef8fffd555a49d",
+      "bytes": 8866
+    },
+    {
+      "path": "android/gradlew.bat",
+      "sha256": "fedad02c18e266ec094995a5751b7fe1eb6e74f66bf75db64fae2e50eb22c234",
+      "bytes": 2896
+    },
+    {
+      "path": "android/README.md",
+      "sha256": "e72f898735f733019edec09903cb183c7291ce625703135489b43280f4d6ef57",
+      "bytes": 4429
+    },
+    {
+      "path": "android/settings.gradle",
+      "sha256": "e84f5f4ea3180312dc93c8fc63a9d81dddd79638ef4fa33c39aef75bf7b9ffaf",
+      "bytes": 438
+    },
+    {
+      "path": "app/globals.css",
+      "sha256": "f6bf5dbb39d8b415cc9b959f76fc15113a26264a30ceb1e33443ab3bde30cadd",
+      "bytes": 67870
+    },
+    {
+      "path": "app/icon.svg",
+      "sha256": "9da2a5fa5e002f6eef6b43f3f3ff04a76165f57648905b30e37267680bfb8799",
+      "bytes": 310
+    },
+    {
+      "path": "app/layout.tsx",
+      "sha256": "08cf863a2e12e869a1c4f0f142bfec129252a6fa1619868a40135a7775e1fe17",
+      "bytes": 729
+    },
+    {
+      "path": "app/page.tsx",
+      "sha256": "32ac6c8e345280202eba825ca9c9374271439c96bc525f3ffcbe9d5629afbc4b",
+      "bytes": 129
+    },
+    {
+      "path": "components/animated-card.tsx",
+      "sha256": "442e717c4c09463b00b77be657b55b9365810f97a1ff03b9a2089ec569d11794",
+      "bytes": 2596
+    },
+    {
+      "path": "components/auth-form.tsx",
+      "sha256": "755c19027d6d7fd8d6346fd374174336813a7eb2e03c43c76e4fa118d2f671f3",
+      "bytes": 13839
+    },
+    {
+      "path": "components/auth-gate.tsx",
+      "sha256": "be8745b90455f68ed8dc5390480a7ca6464e5a5bfa83d15ad12b2e2108dac38e",
+      "bytes": 2998
+    },
+    {
+      "path": "components/calibration-options.tsx",
+      "sha256": "e5a5436bc4253fa4be46d8765e1f3641bca1d3b8b18aa53a903111d4e65f8a0c",
+      "bytes": 3184
+    },
+    {
+      "path": "components/data-visuals.tsx",
+      "sha256": "caececbb252cb0fc46d557df22cec9ad6136765a151373b1ccb235b882e16d3f",
+      "bytes": 5783
+    },
+    {
+      "path": "components/export-dialog.tsx",
+      "sha256": "7e4935ab74ea69463dc01d6fdf5d1a4f2103ed292a5089c4c223c1ae41596db9",
+      "bytes": 5788
+    },
+    {
+      "path": "components/forecast-validation.tsx",
+      "sha256": "beec12e8b17ebce8f1fbed8572011981b2ec76e30708b97f9180e855002f5508",
+      "bytes": 8889
+    },
+    {
+      "path": "components/greenmine.tsx",
+      "sha256": "14d93cb7dffd29c0b8c3769fa7a32ea9f6faeb9d602d6725ce44bcd094332ec2",
+      "bytes": 48938
+    },
+    {
+      "path": "components/import-readings.tsx",
+      "sha256": "f67f1ebbb60db6b46ef29edcf0602e6155e9a055067489f386bd6257e4d3f330",
+      "bytes": 6580
+    },
+    {
+      "path": "components/mail-settings.tsx",
+      "sha256": "00967de52d6c989dfc5d28ee5adccff6d30645f629b891efcf9ad41928602420",
+      "bytes": 4957
+    },
+    {
+      "path": "components/plant-settings.tsx",
+      "sha256": "0355d67218b7df69711a326dd083d33bac06902cb90b6f1d6c01d23327e8927b",
+      "bytes": 9566
+    },
+    {
+      "path": "components/theme-toggle.tsx",
+      "sha256": "b6d2a2b8ef50609828b1668894a4afc204650a45c16aa5c77da797d603070111",
+      "bytes": 3546
+    },
+    {
+      "path": "lib/format.ts",
+      "sha256": "98f2c318181d7371398152bfdc998b9cc7321d14b4f743b88e371266035cfacb",
+      "bytes": 938
+    },
+    {
+      "path": "lib/plant.ts",
+      "sha256": "3b87795b5beec28ea4bb1d26badadaeb58352e7e6f9ddb917c168e1739d540c9",
+      "bytes": 496
+    },
+    {
+      "path": "lib/service.ts",
+      "sha256": "1351c37c01b45eebe88b5000e43edf9d8e2d798c3c316c9636667e9f1bb19460",
+      "bytes": 1746
+    },
+    {
+      "path": "public/file.svg",
+      "sha256": "2b67812c325c199a02536cdbeea0c593a72f707d323b72ee3e08dbab06753bd4",
+      "bytes": 391
+    },
+    {
+      "path": "public/globe.svg",
+      "sha256": "b614b9bf183925957661ac851498fe1d8029fd43a62fbfed86f9e2624a57e7cf",
+      "bytes": 1035
+    },
+    {
+      "path": "public/next.svg",
+      "sha256": "55995dfad6ecb4945a1e856ddca03c5e16aa5bf13fd21b4df6a74ae79357bcfc",
+      "bytes": 1375
+    },
+    {
+      "path": "public/vercel.svg",
+      "sha256": "f081337b2fee635b455b63275406a3e7f39d6a014e25ad90dab5a67e62a12ac4",
+      "bytes": 128
+    },
+    {
+      "path": "public/window.svg",
+      "sha256": "644768c4aaeb4767bce293344eeb0c125fb804a94d801440424072202d85e3a1",
+      "bytes": 385
+    },
+    {
+      "path": "scripts/android-stop-server.ps1",
+      "sha256": "271be7ac3a26fe415a2bcb3180f793c269570f09e6e95b09ad93ef8015ffefe6",
+      "bytes": 715
+    },
+    {
+      "path": "scripts/android-usb.ps1",
+      "sha256": "56d3bda0f89caceff9efd09c32dfd05f6c9d99562ec86e53e22a14606d664d8b",
+      "bytes": 2818
+    },
+    {
+      "path": "scripts/check-format.cjs",
+      "sha256": "4c6d2383595d2817be832dc55cbdf1d80ac66a1c4cdecb96a4a8a24c46012ed4",
+      "bytes": 734
+    },
+    {
+      "path": "server/auth_flow.py",
+      "sha256": "12b2c510d9fb9e36652fe160ac590eca54c1a449703b1e6197af19883b7d178c",
+      "bytes": 8667
+    },
+    {
+      "path": "server/bridge.py",
+      "sha256": "277ab3a474ddfcc45234c4766220f229f58bec72719778d4a552fca7a17d695c",
+      "bytes": 10729
+    },
+    {
+      "path": "server/calibration.py",
+      "sha256": "29b30aebbce793e12004065f7022d41b6adffb4213706fafcb52db23873aad2e",
+      "bytes": 2130
+    },
+    {
+      "path": "server/captcha.py",
+      "sha256": "28283d4f059c92ce7f181b6df5003765d9f61a01943932fbf89747ec177e1291",
+      "bytes": 3296
+    },
+    {
+      "path": "server/configure_mail.py",
+      "sha256": "d37053e9761479d8fe669c23332a2815bf45b67a3543eb317526b8caa8729113",
+      "bytes": 1554
+    },
+    {
+      "path": "server/history_baseline.py",
+      "sha256": "6c6083e0b2fb90370f4939507e5e5afe346b958c54ed755e9ce117535d60a998",
+      "bytes": 1532
+    },
+    {
+      "path": "server/issued_forecasts.py",
+      "sha256": "500fbe1f408999efd58ffcce47aca865bc86e31c46cdc48b3ed9fc245bc1262a",
+      "bytes": 1594
+    },
+    {
+      "path": "server/mail_delivery.py",
+      "sha256": "4f5a1736773901abf5165f4117202c5de166a2187278d1d3304efa609235962c",
+      "bytes": 1752
+    },
+    {
+      "path": "server/mail_settings.py",
+      "sha256": "a7f0da7019eee4437a9f9f6b02743cbb4f88962922dc4e77a78c7af43b7d084e",
+      "bytes": 2736
+    },
+    {
+      "path": "server/original-hashes.json",
+      "sha256": "21eb191f79f4ea8f5ef4d58c73bb36bdcfd20aecc2d31de06f5a4c8babe30e62",
+      "bytes": 1828
+    },
+    {
+      "path": "server/passwords.py",
+      "sha256": "00f0d16ad0b11a904e8aebee7d4da6d6b853b876c9c0413dc54a3b616a326b5a",
+      "bytes": 1072
+    },
+    {
+      "path": "server/pilot_model.py",
+      "sha256": "a34573d37568454675a8d30baed1bea94716079dc0644464a908daccba4eb831",
+      "bytes": 2779
+    },
+    {
+      "path": "server/plant_model.py",
+      "sha256": "00f1ddaf50ba8efc6eb4d5f18200cf29c2e070068d084c6b2b939efc2fa6eeab",
+      "bytes": 7452
+    },
+    {
+      "path": "server/recovery.py",
+      "sha256": "b8c725983bb8a54328a85e8730cb44fb924a0328e0b616e9c64567e749c0b728",
+      "bytes": 4235
+    },
+    {
+      "path": "server/requirements.txt",
+      "sha256": "a66463df5b5f38afa26d5af8edc77ac8f2ebf54eded5f5434fd5a389a5819d8b",
+      "bytes": 50
+    },
+    {
+      "path": "server/service.py",
+      "sha256": "15d6fcd6d35c680c762caa5bb4af18cc98698109d3133b1d06eb8299ce883856",
+      "bytes": 16310
+    },
+    {
+      "path": "server/test_auth_flow.py",
+      "sha256": "4171564dab83a97ab19fd4987aa385699a1b1307bc87274a4f9385bab1e22996",
+      "bytes": 9385
+    },
+    {
+      "path": "server/test_bridge.py",
+      "sha256": "38abc7f77d73f2779aeb3b7a7854ffb5574783c7e1c4d2c5b1e1d1163eda2f59",
+      "bytes": 4346
+    },
+    {
+      "path": "server/test_history_baseline.py",
+      "sha256": "06b7e7cc3460b7c9fcb1c3d15727d34373d71ab679bc4a9b9759e8f7c6d2beab",
+      "bytes": 685
+    },
+    {
+      "path": "server/test_issued_forecasts.py",
+      "sha256": "c8a3314524ee92c507a59c7506f0a26a3f00d9708bd7a3b195f1e261dd13c280",
+      "bytes": 1544
+    },
+    {
+      "path": "server/test_mail_delivery.py",
+      "sha256": "849fac5e41f21bff8e7f4485cbe4d8035838eacc454f26154e3f99f393b10e99",
+      "bytes": 1433
+    },
+    {
+      "path": "server/test_mail_settings.py",
+      "sha256": "4ff2b1fd4b686a4c97ad150f2e3d321f83533f867945abaab08ba3f6a41b0a03",
+      "bytes": 3474
+    },
+    {
+      "path": "server/test_plant_model.py",
+      "sha256": "1795ac460d2848d84022ff3f5a6fa30649a9a6ce15ef838f498fbddc7d8c3b4c",
+      "bytes": 3421
+    },
+    {
+      "path": "server/test_production_sources.py",
+      "sha256": "cf451d9167847dfc4307079f8e80f8d32763953725fd7a087b52ef1b8d7548dc",
+      "bytes": 5277
+    },
+    {
+      "path": "server/test_recovery.py",
+      "sha256": "941f48deb7477f1e5a7c3db7e10e9aa9beb8fd850a75f4f27d072f5100f8e6a9",
+      "bytes": 3945
+    },
+    {
+      "path": "server/test_service.py",
+      "sha256": "e50338691ee14d7b36877f874e3ec1e51157e30c55138fcf6a1520cfa9656aa0",
+      "bytes": 6939
+    },
+    {
+      "path": "server/test_support.py",
+      "sha256": "5edbe8387b80c39d48dc38441bacddcc77910603e9d252c9ae8db26a426ee27a",
+      "bytes": 1106
+    },
+    {
+      "path": "server/test_validation.py",
+      "sha256": "ea012029ca505b889b90b35d633cede2ef63b9b6b30740deefc7eef31886047c",
+      "bytes": 4791
+    },
+    {
+      "path": "server/test_weather.py",
+      "sha256": "c76b12a9c7dc799560fd02820435c5226c5f1ffc8279e2a2fd5398ab2afe43e3",
+      "bytes": 3610
+    },
+    {
+      "path": "server/validation.py",
+      "sha256": "023505196b7c1ff4738a23e38a5feb66a0cd123b1871ff9af6673f02309786b6",
+      "bytes": 3785
+    },
+    {
+      "path": "server/weather.py",
+      "sha256": "7ca572566e61834f202e5bc5e7294f2a6bb571c6b73c9c53caa24da4c89e127e",
+      "bytes": 3605
+    },
+    {
+      "path": "server/reference_data/tehran_climate.json",
+      "sha256": "4bfe788c6503b4ca22ca1d6a052ee5f86bdecce7afdf1e4f3306cd7480e94b92",
+      "bytes": 418
+    },
+    {
+      "path": "server/reference_data/tehran_pilot.json",
+      "sha256": "0100cf6000c7048f72557abd4ed2f7bc88ee72583c227fcfef9bac701ea40e71",
+      "bytes": 6860
+    },
+    {
+      "path": "public/fonts/Anjoman.woff",
+      "sha256": "b3a1b9966fcf2e7379ddef8606f330429e4f6e28f413450daf4ae13e82789d21",
+      "bytes": 205192
+    },
+    {
+      "path": "public/fonts/FontLicense.txt",
+      "sha256": "dea81750747abe1f07c4e78369c624d5bd4f3a7d51a2e10d196ca493c8312082",
+      "bytes": 1674
+    },
+    {
+      "path": "public/images/solar-blue.png",
+      "sha256": "04116b31992d15bd13cab72c62d48ab3cca7f07665ccd8ca579d21a7d402adc7",
+      "bytes": 2135395
+    },
+    {
+      "path": "public/images/solar-minimal-wide.png",
+      "sha256": "ed4f3da50a1fed456aa471e7417237fb5fc41a1264ef530d95d3c1ddf8771c94",
+      "bytes": 1726025
+    },
+    {
+      "path": "public/images/solar-scene.png",
+      "sha256": "633214f48536c2e95886b5b6a31c7d5001da2520e51677ec3cc405305bbed38b",
+      "bytes": 2282264
+    },
+    {
+      "path": "public/images/solar-vivid-portrait.png",
+      "sha256": "0e990bf781162be45421a6cf0a967e3a51fb580f7b68f69fbca0e8a6ec9c0777",
+      "bytes": 2668437
+    },
+    {
+      "path": "public/samples/202608.CSV",
+      "sha256": "5a9e358fe78cfdf405e90ba23b33e5ffa06213faa7d396659fbd44cf1c3266f1",
+      "bytes": 661
+    },
+    {
+      "path": "public/samples/202609.CSV",
+      "sha256": "f57c04b3b8ade2ad0afd9f348dff34d3441ec849eca958de519374425ac7eab4",
+      "bytes": 644
+    },
+    {
+      "path": "app/dashboard/page.tsx",
+      "sha256": "ca22928b6eb3a8ceae59df10403a4d5190e7b9bd80ac291c790d31a3fb7e5cea",
+      "bytes": 129
+    },
+    {
+      "path": "app/api/auth/route.ts",
+      "sha256": "c097564866bdd938396418d793689e27896bf8d4d1b51648c99a17962688efd7",
+      "bytes": 2762
+    },
+    {
+      "path": "app/api/engine/route.ts",
+      "sha256": "2ca59c0ec4e7da89e917a769313bcd4e7b059dcd8d454b35666738942e11c1ba",
+      "bytes": 618
+    },
+    {
+      "path": "android/app/build.gradle",
+      "sha256": "c4db09b316d43db1211893380279576e338449bd238117d7112c39efc39b6b37",
+      "bytes": 1889
+    },
+    {
+      "path": "android/gradle/wrapper/gradle-wrapper.jar",
+      "sha256": "b3a875ddc1f044746e1b1a55f645584505f4a10438c1afea9f15e92a7c42ec13",
+      "bytes": 46175
+    },
+    {
+      "path": "android/gradle/wrapper/gradle-wrapper.properties",
+      "sha256": "5d974da23c1e708448f6abe5ccbb719a2fa8bfd5bd5351eaa41678875df5c0e4",
+      "bytes": 259
+    },
+    {
+      "path": "android/app/src/main/AndroidManifest.xml",
+      "sha256": "28db43bdd17a44f92f7e8e9f13711ac1897a71127d43227a3288f0d82f40520b",
+      "bytes": 914
+    },
+    {
+      "path": "android/app/src/main/res/drawable/ic_greenmine.xml",
+      "sha256": "d7523b847a0683d9497fbe611a8b973791ca30d4f564e9cac1b421902b520a01",
+      "bytes": 525
+    },
+    {
+      "path": "android/app/src/main/res/values/styles.xml",
+      "sha256": "671a977041039d8b79f0769f7a56222266147a314479888dd87a18ca49d24b58",
+      "bytes": 618
+    },
+    {
+      "path": "android/app/src/main/res/xml/network_security_config.xml",
+      "sha256": "c3b5bd8ea40da4407cdd5c5bba4333bfd9425aca70623cefe77e0cf805e981af",
+      "bytes": 102
+    },
+    {
+      "path": "android/app/src/main/java/ir/greenmine/app/MainActivity.java",
+      "sha256": "19d8780edeb6f750e94cce77d09566e862acbbf20a2c59ec8ce49a52d65dcf51",
+      "bytes": 13002
+    },
+    {
+      "path": "android/app/src/debug/res/xml/network_security_config.xml",
+      "sha256": "a6a15accc9f03e73ba455c58950bcd37fd09a6ea8fe50c5e1ca143680aa13f26",
+      "bytes": 232
+    },
+    {
+      "path": "android/app/src/androidTest/java/ir/greenmine/app/DeviceSmokeTest.java",
+      "sha256": "3fb125e7f1eebde03ec69813280f8114707bb50ba9673e54840ecf4498bb2953",
+      "bytes": 18001
+    },
+    {
+      "path": "python/202608.CSV",
+      "sha256": "5a9e358fe78cfdf405e90ba23b33e5ffa06213faa7d396659fbd44cf1c3266f1",
+      "bytes": 661
+    },
+    {
+      "path": "python/202609.CSV",
+      "sha256": "f57c04b3b8ade2ad0afd9f348dff34d3441ec849eca958de519374425ac7eab4",
+      "bytes": 644
+    },
+    {
+      "path": "python/Azar 1404.xlsx",
+      "sha256": "85bb5de59baf19798d8f3cd1140da3517e77c5d5c9102909dfc6ca4910237b90",
+      "bytes": 9951
+    },
+    {
+      "path": "python/inverter.CSV",
+      "sha256": "f428d27dc72b89604c0d2f3e959275d715db70c5e32f21a0a34577bfa01b6f82",
+      "bytes": 523
+    },
+    {
+      "path": "python/Mehrava Sharbati_Presentation.pdf",
+      "sha256": "61db11cf52479b0e3e3fe26d7cfe89cb149eac2bed07ccb4f8ae1564255baf33",
+      "bytes": 2175790
+    },
+    {
+      "path": "python/Mehrava Sharbati_Presentation.pptx",
+      "sha256": "fa6eb347550db5e48ef85c5cba8f062ee5cc60ac6b208f3db768ae3bef70ecd6",
+      "bytes": 6916021
+    },
+    {
+      "path": "python/start.bat",
+      "sha256": "f59e5e46524c10891111bbe048896fb86f5962f33e9d1209980c75406eed9ad5",
+      "bytes": 518
+    },
+    {
+      "path": "python/جدول نهایی ضرایب.docx",
+      "sha256": "dee2c8c40ac78a7f453e72313b5c94db49460d016e3413627ab87fb47749e9e9",
+      "bytes": 20104
+    },
+    {
+      "path": "python/codes/check_users.py",
+      "sha256": "c001ad6323f5ec7fcdcb046c71f2d2dd6f9cb0f1ff7df3c8c61e4c111b5b25ad",
+      "bytes": 378
+    },
+    {
+      "path": "python/codes/create_user.py",
+      "sha256": "0fa70fced6644d99028bbd282dd1baeefb4d11ceb721a19acb96b28e0b2874a0",
+      "bytes": 1832
+    },
+    {
+      "path": "python/codes/csv_importer.py",
+      "sha256": "aaf674dd9f6e875c368fe829f56c350896baa3c824877ce8be4a9a67d1eada0f",
+      "bytes": 1214
+    },
+    {
+      "path": "python/codes/dashboard_view.py",
+      "sha256": "60aa3728b9cc5f84b9764e1605eec5792860b817b9aa30b1bddb204bcbccbb47",
+      "bytes": 11695
+    },
+    {
+      "path": "python/codes/db_config.py",
+      "sha256": "5bb9d1c735beca39aebca7bfd965c1260729f278c10eb5b7ab7681e4701a0347",
+      "bytes": 93
+    },
+    {
+      "path": "python/codes/db_setup.py",
+      "sha256": "c710d3e2306bde26cbf7603c1ab1ac654277cc830da9f7c8955fe40329f2fe69",
+      "bytes": 485
+    },
+    {
+      "path": "python/codes/email_verification.py",
+      "sha256": "6b5ce08e5ad81c61dd80fe6268983e927aa4d45667ec4d84bfa1218c2479ed7b",
+      "bytes": 14454
+    },
+    {
+      "path": "python/codes/i18n.py",
+      "sha256": "ec0a606fff13d2070f619b934bafe9a17706dd68cbda12e79134aaf5e9990c11",
+      "bytes": 13820
+    },
+    {
+      "path": "python/codes/init_db.py",
+      "sha256": "41f27229a0f65e62b3a9090077d3d76c90053deddb1005f35adb4a480b1a093a",
+      "bytes": 3637
+    },
+    {
+      "path": "python/codes/migrate_db.py",
+      "sha256": "b7944e0815602a822deca4b123bdd28b38bcbe3974209743cc3a52f42844971b",
+      "bytes": 2055
+    },
+    {
+      "path": "python/codes/migrate_plants.py",
+      "sha256": "b919916c44295b633273980bed23a628a96e8e86b22a6b29c1a274ad9050b182",
+      "bytes": 1790
+    },
+    {
+      "path": "python/codes/prediction_engine.py",
+      "sha256": "210fa80e34ed53d3854e0b7a947f8f5c8e893705fbef8c8e8e6f20b5c0858d72",
+      "bytes": 18086
+    },
+    {
+      "path": "python/codes/proj1.py",
+      "sha256": "80e460c2e9d421e6c387b5c3d997d9b675e9d1496b642866d07fd82379929332",
+      "bytes": 42790
+    },
+    {
+      "path": "python/codes/seed_data.py",
+      "sha256": "c8c90c3bf69b42d6803b1ae12b668ef55c3ba54e39250d9124e810f78d8828e6",
+      "bytes": 3306
+    },
+    {
+      "path": "python/codes/test_smtp.py",
+      "sha256": "a49c9c192ff7277df2afbf46f87cf4a0ff4fe90ed68638eea5f4d2cfbcb7b05b",
+      "bytes": 552
+    },
+    {
+      "path": "python/codes/.streamlit/config.toml",
+      "sha256": "0e255939ce8c0ec8ab67e0610db00ff22ea4e0c424df845b54515a16fc1d76e6",
+      "bytes": 187
+    }
+  ]
+}
