@@ -15,7 +15,9 @@ import java.util.concurrent.atomic.AtomicReference;
 public class DeviceSmokeTest extends Instrumentation {
     private MainActivity activity;
     private boolean authUi=true;
-    @Override public void onCreate(Bundle args){super.onCreate(args);authUi=args==null||!"false".equals(args.getString("authUi"));start();}
+    private boolean shortcutTest=false;
+    private volatile boolean forecastFixture=false;
+    @Override public void onCreate(Bundle args){super.onCreate(args);authUi=args==null||!"false".equals(args.getString("authUi"));shortcutTest=args!=null&&"true".equals(args.getString("shortcutTest"));start();}
     @Override public void onStart(){
         Bundle result=new Bundle();
         try {
@@ -42,19 +44,40 @@ public class DeviceSmokeTest extends Instrumentation {
                 runOnMainSync(()->activity.testWebView().getSettings().setUseWideViewPort(false));capture("bundled-landing-fa.png");
                 runOnMainSync(()->activity.testWebView().loadUrl(BuildConfig.SERVER_URL+"/download"));Thread.sleep(1200);
                 await("document.querySelector('.download-card')!==null",20);
-                require("document.querySelector('.download-card a[download]').getAttribute('href')==='/downloads/GreenMine-1.4.2.apk'","Latest APK download link");
+                require("document.querySelector('.download-card a[download]').getAttribute('href')==='/downloads/GreenMine-1.4.3.apk'","Latest APK download link");
                 require("document.documentElement.scrollWidth<=innerWidth+1","Download page fits phone");capture("download-page-fa.png");
+                final byte[] forecastResponse=getContext().getAssets().open("forecast-shortcut.json").readAllBytes();
                 final byte[] fixture=getContext().getAssets().open("layout-overview.json").readAllBytes();
                 runOnMainSync(()->activity.testWebView().setWebViewClient(new android.webkit.WebViewClient(){
                     @Override public android.webkit.WebResourceResponse shouldInterceptRequest(android.webkit.WebView view,android.webkit.WebResourceRequest req){
                         if(req.getUrl().getPath().equals("/api/auth"))return new android.webkit.WebResourceResponse("application/json","UTF-8",new java.io.ByteArrayInputStream("{\"user\":{\"id\":-1,\"email\":\"layout-test@example.org\"},\"auth_email_available\":true}".getBytes(java.nio.charset.StandardCharsets.UTF_8)));
-                        if(req.getUrl().getPath().equals("/api/engine"))return new android.webkit.WebResourceResponse("application/json","UTF-8",new java.io.ByteArrayInputStream(fixture));
+                        if(req.getUrl().getPath().equals("/api/engine"))return new android.webkit.WebResourceResponse("application/json","UTF-8",new java.io.ByteArrayInputStream(forecastFixture?forecastResponse:fixture));
                         return activity.testBundledResource(req);
                     }
                 }));
                 runOnMainSync(()->activity.testWebView().loadUrl(BuildConfig.SERVER_URL+"/dashboard"));Thread.sleep(1200);
                 await("document.querySelector('.overview-metrics')!==null",20);
                 await("document.querySelector('.workspace-actions button:disabled')===null",20);
+                if(shortcutTest){
+                    forecastFixture=true;
+                    for(int width:new int[]{1280,390}){
+                        runOnMainSync(()->activity.testWebView().getSettings().setUseWideViewPort(true));
+                        js("document.querySelector('meta[name=viewport]').content='width="+width+"';true");Thread.sleep(500);
+                        for(int repeat=0;repeat<3;repeat++){
+                            if(repeat>0||width==390){click("[role=tab][id$=trigger-overview]");await("document.querySelector('.forecast-prompt button')!==null",10);}
+                            js("document.querySelector('.forecast-prompt button').scrollIntoView({block:'center'});true");
+                            click(".forecast-prompt button");
+                            await("document.querySelector('[data-panel=forecast] .forecast-stats')!==null",10);
+                            js("document.querySelector('.forecast-header').scrollIntoView({block:'start'});true");Thread.sleep(900);
+                            require("(()=>{const el=document.querySelector('[data-panel=forecast]');return !el.inert && getComputedStyle(el).opacity==='1' && el.getBoundingClientRect().height>100})()","Shortcut shows active forecast at "+width);
+                            js("document.querySelector('.forecast-stats').scrollIntoView({block:'center'});true");Thread.sleep(1000);
+                            require("[...document.querySelectorAll('.forecast-stats [data-animated-card]')].every(el=>Number(getComputedStyle(el).opacity)>.9)","Forecast metric cards revealed from shortcut at "+width);
+                        }
+                    }
+                    capture("forecast-shortcut-fixed.png");
+                    runOnMainSync(()->{activity.testRestoreClient();activity.testWebView().getSettings().setUseWideViewPort(false);activity.testWebView().loadUrl(BuildConfig.SERVER_URL+"/");});
+                    result.putString("stream","PASS: overview prediction shortcut shows forecast content and reveals cards on first click, repeated at desktop and mobile widths; test-only forecast response.\n");finish(Activity.RESULT_OK,result);return;
+                }
                 require("document.querySelector('.plant-scene>img').src.includes('solar-minimal-wide')","Dashboard uses new wide image");
                 await("document.querySelector('.plant-scene>img').naturalWidth>0",10);
                 require("document.querySelector('.overview-metrics').getBoundingClientRect().top>=document.querySelector('.plant-scene').getBoundingClientRect().bottom+8","Mobile photo and instrument cards have positive spacing");

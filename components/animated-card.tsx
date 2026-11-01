@@ -24,5 +24,5 @@ export function AnimatedCard({children,className='',as='section'}:{children:Reac
 
 export function AnimatedPanel({value,children}:{value:string;children:ReactNode}){
  const present=useIsPresent();const reduced=useReducedMotion();
- return <Tabs.Content value={value} forceMount asChild><motion.div className="tab-panel" data-panel={value} inert={!present} aria-hidden={!present} initial={{opacity:0}} animate={{opacity:1}} exit={{opacity:0,transition:{duration:reduced?0:.16,when:'afterChildren'}}} transition={{duration:reduced?0:.2}}>{children}</motion.div></Tabs.Content>;
+ return <Tabs.Content value={value} forceMount asChild><motion.div className="tab-panel" data-panel={value} style={{position:present?'relative':'absolute',inset:present?undefined:'0 0 auto',width:'100%',zIndex:present?1:0,pointerEvents:present?undefined:'none'}} inert={!present} aria-hidden={!present} initial={{opacity:0}} animate={{opacity:1}} exit={{opacity:0,transition:{duration:reduced?0:.16}}} transition={{duration:reduced?0:.2}}>{children}</motion.div></Tabs.Content>;
 }
