@@ -1,0 +1,1016 @@
+{
+  "forecast": {
+    "horizon": "next_month",
+    "target_start": "2026-11-22",
+    "target_end": "2026-12-21",
+    "target_year": 1405,
+    "target_month": 9,
+    "days": [
+      {
+        "day": 1,
+        "jalali_date": "1405/09/01",
+        "gregorian_date": "2026-11-22",
+        "production_kwh": 29.357,
+        "ghi": 2.86,
+        "source": "Climate model"
+      },
+      {
+        "day": 2,
+        "jalali_date": "1405/09/02",
+        "gregorian_date": "2026-11-23",
+        "production_kwh": 29.128,
+        "ghi": 2.843,
+        "source": "Climate model"
+      },
+      {
+        "day": 3,
+        "jalali_date": "1405/09/03",
+        "gregorian_date": "2026-11-24",
+        "production_kwh": 28.902,
+        "ghi": 2.826,
+        "source": "Climate model"
+      },
+      {
+        "day": 4,
+        "jalali_date": "1405/09/04",
+        "gregorian_date": "2026-11-25",
+        "production_kwh": 28.681,
+        "ghi": 2.809,
+        "source": "Climate model"
+      },
+      {
+        "day": 5,
+        "jalali_date": "1405/09/05",
+        "gregorian_date": "2026-11-26",
+        "production_kwh": 28.464,
+        "ghi": 2.792,
+        "source": "Climate model"
+      },
+      {
+        "day": 6,
+        "jalali_date": "1405/09/06",
+        "gregorian_date": "2026-11-27",
+        "production_kwh": 28.251,
+        "ghi": 2.775,
+        "source": "Climate model"
+      },
+      {
+        "day": 7,
+        "jalali_date": "1405/09/07",
+        "gregorian_date": "2026-11-28",
+        "production_kwh": 28.042,
+        "ghi": 2.758,
+        "source": "Climate model"
+      },
+      {
+        "day": 8,
+        "jalali_date": "1405/09/08",
+        "gregorian_date": "2026-11-29",
+        "production_kwh": 27.824,
+        "ghi": 2.741,
+        "source": "Climate model"
+      },
+      {
+        "day": 9,
+        "jalali_date": "1405/09/09",
+        "gregorian_date": "2026-11-30",
+        "production_kwh": 27.624,
+        "ghi": 2.724,
+        "source": "Climate model"
+      },
+      {
+        "day": 10,
+        "jalali_date": "1405/09/10",
+        "gregorian_date": "2026-12-01",
+        "production_kwh": 27.428,
+        "ghi": 2.707,
+        "source": "Climate model"
+      },
+      {
+        "day": 11,
+        "jalali_date": "1405/09/11",
+        "gregorian_date": "2026-12-02",
+        "production_kwh": 27.236,
+        "ghi": 2.689,
+        "source": "Climate model"
+      },
+      {
+        "day": 12,
+        "jalali_date": "1405/09/12",
+        "gregorian_date": "2026-12-03",
+        "production_kwh": 27.048,
+        "ghi": 2.672,
+        "source": "Climate model"
+      },
+      {
+        "day": 13,
+        "jalali_date": "1405/09/13",
+        "gregorian_date": "2026-12-04",
+        "production_kwh": 26.863,
+        "ghi": 2.655,
+        "source": "Climate model"
+      },
+      {
+        "day": 14,
+        "jalali_date": "1405/09/14",
+        "gregorian_date": "2026-12-05",
+        "production_kwh": 26.682,
+        "ghi": 2.638,
+        "source": "Climate model"
+      },
+      {
+        "day": 15,
+        "jalali_date": "1405/09/15",
+        "gregorian_date": "2026-12-06",
+        "production_kwh": 26.505,
+        "ghi": 2.621,
+        "source": "Climate model"
+      },
+      {
+        "day": 16,
+        "jalali_date": "1405/09/16",
+        "gregorian_date": "2026-12-07",
+        "production_kwh": 26.331,
+        "ghi": 2.604,
+        "source": "Climate model"
+      },
+      {
+        "day": 17,
+        "jalali_date": "1405/09/17",
+        "gregorian_date": "2026-12-08",
+        "production_kwh": 26.159,
+        "ghi": 2.587,
+        "source": "Climate model"
+      },
+      {
+        "day": 18,
+        "jalali_date": "1405/09/18",
+        "gregorian_date": "2026-12-09",
+        "production_kwh": 25.99,
+        "ghi": 2.57,
+        "source": "Climate model"
+      },
+      {
+        "day": 19,
+        "jalali_date": "1405/09/19",
+        "gregorian_date": "2026-12-10",
+        "production_kwh": 25.822,
+        "ghi": 2.553,
+        "source": "Climate model"
+      },
+      {
+        "day": 20,
+        "jalali_date": "1405/09/20",
+        "gregorian_date": "2026-12-11",
+        "production_kwh": 25.657,
+        "ghi": 2.536,
+        "source": "Climate model"
+      },
+      {
+        "day": 21,
+        "jalali_date": "1405/09/21",
+        "gregorian_date": "2026-12-12",
+        "production_kwh": 25.488,
+        "ghi": 2.519,
+        "source": "Climate model"
+      },
+      {
+        "day": 22,
+        "jalali_date": "1405/09/22",
+        "gregorian_date": "2026-12-13",
+        "production_kwh": 25.321,
+        "ghi": 2.502,
+        "source": "Climate model"
+      },
+      {
+        "day": 23,
+        "jalali_date": "1405/09/23",
+        "gregorian_date": "2026-12-14",
+        "production_kwh": 25.156,
+        "ghi": 2.485,
+        "source": "Climate model"
+      },
+      {
+        "day": 24,
+        "jalali_date": "1405/09/24",
+        "gregorian_date": "2026-12-15",
+        "production_kwh": 25.005,
+        "ghi": 2.467,
+        "source": "Climate model"
+      },
+      {
+        "day": 25,
+        "jalali_date": "1405/09/25",
+        "gregorian_date": "2026-12-16",
+        "production_kwh": 24.841,
+        "ghi": 2.45,
+        "source": "Climate model"
+      },
+      {
+        "day": 26,
+        "jalali_date": "1405/09/26",
+        "gregorian_date": "2026-12-17",
+        "production_kwh": 25.161,
+        "ghi": 2.459,
+        "source": "Climate model"
+      },
+      {
+        "day": 27,
+        "jalali_date": "1405/09/27",
+        "gregorian_date": "2026-12-18",
+        "production_kwh": 25.47,
+        "ghi": 2.467,
+        "source": "Climate model"
+      },
+      {
+        "day": 28,
+        "jalali_date": "1405/09/28",
+        "gregorian_date": "2026-12-19",
+        "production_kwh": 25.796,
+        "ghi": 2.476,
+        "source": "Climate model"
+      },
+      {
+        "day": 29,
+        "jalali_date": "1405/09/29",
+        "gregorian_date": "2026-12-20",
+        "production_kwh": 26.124,
+        "ghi": 2.484,
+        "source": "Climate model"
+      },
+      {
+        "day": 30,
+        "jalali_date": "1405/09/30",
+        "gregorian_date": "2026-12-21",
+        "production_kwh": 26.454,
+        "ghi": 2.493,
+        "source": "Climate model"
+      }
+    ],
+    "total_kwh": 802.81,
+    "first_half_kwh": 418.035,
+    "second_half_kwh": 384.775,
+    "api_days": 0,
+    "model_days": 30
+  },
+  "calibration": {
+    "model": "frozen_reference_bias_v4",
+    "applied": true,
+    "factor": 0.9010077000704713,
+    "reason": "APPLIED",
+    "training_days": 61,
+    "training_start": "2026-08-01",
+    "training_end": "2026-09-30",
+    "staleness_days": 31,
+    "observed_kwh": 3930.115,
+    "modeled_training_kwh": 4361.911,
+    "reference_plant": {
+      "capacity_dc": 11.4,
+      "capacity_ac": 15,
+      "tilt": 30,
+      "azimuth": 180,
+      "performance_ratio": 0.8,
+      "location_mode": "gps",
+      "latitude": 35.75625577683599,
+      "longitude": 51.431394829419425,
+      "mount_type": "Fixed"
+    },
+    "profile": "tehran_kaco_11_4",
+    "scenario_changed": false
+  },
+  "validation": {
+    "method": "chronological_monthly_climatology_v1",
+    "scope": "measured_reference_configuration",
+    "weather": "long_term_climatology_not_archived_forecasts",
+    "periods": [
+      {
+        "start": "2026-08-01",
+        "end": "2026-08-31",
+        "actual_kwh": 2052.741,
+        "predicted_kwh": 2260.88,
+        "difference_kwh": 208.139,
+        "bias_pct": 10.14,
+        "absolute_error_pct": 10.14,
+        "mae_kwh": 6.714,
+        "rmse_kwh": 8.152,
+        "wape_pct": 10.14,
+        "mape_pct": 10.789,
+        "days": 31,
+        "zero_actual_days": 0,
+        "training_days": 0,
+        "training_start": null,
+        "training_end": null,
+        "factor": 1,
+        "calibration_applied": false,
+        "raw": {
+          "actual_kwh": 2052.741,
+          "predicted_kwh": 2028.474,
+          "difference_kwh": -24.267,
+          "bias_pct": -1.182,
+          "absolute_error_pct": 1.182,
+          "mae_kwh": 3.734,
+          "rmse_kwh": 4.692,
+          "wape_pct": 5.639,
+          "mape_pct": 5.962,
+          "days": 31,
+          "zero_actual_days": 0
+        },
+        "baseline": {
+          "actual_kwh": 2052.741,
+          "predicted_kwh": 2260.88,
+          "difference_kwh": 208.139,
+          "bias_pct": 10.14,
+          "absolute_error_pct": 10.14,
+          "mae_kwh": 6.714,
+          "rmse_kwh": 8.152,
+          "wape_pct": 10.14,
+          "mape_pct": 10.789,
+          "days": 31,
+          "zero_actual_days": 0
+        },
+        "daily": [
+          {
+            "date": "2026-08-01",
+            "actual_kwh": 68.095,
+            "predicted_kwh": 72.308
+          },
+          {
+            "date": "2026-08-02",
+            "actual_kwh": 67.049,
+            "predicted_kwh": 72.371
+          },
+          {
+            "date": "2026-08-03",
+            "actual_kwh": 48.106,
+            "predicted_kwh": 72.439
+          },
+          {
+            "date": "2026-08-04",
+            "actual_kwh": 71.881,
+            "predicted_kwh": 72.511
+          },
+          {
+            "date": "2026-08-05",
+            "actual_kwh": 69.623,
+            "predicted_kwh": 72.588
+          },
+          {
+            "date": "2026-08-06",
+            "actual_kwh": 68.327,
+            "predicted_kwh": 72.67
+          },
+          {
+            "date": "2026-08-07",
+            "actual_kwh": 58.227,
+            "predicted_kwh": 72.756
+          },
+          {
+            "date": "2026-08-08",
+            "actual_kwh": 69.034,
+            "predicted_kwh": 72.846
+          },
+          {
+            "date": "2026-08-09",
+            "actual_kwh": 67.864,
+            "predicted_kwh": 72.94
+          },
+          {
+            "date": "2026-08-10",
+            "actual_kwh": 68.056,
+            "predicted_kwh": 73.039
+          },
+          {
+            "date": "2026-08-11",
+            "actual_kwh": 68.907,
+            "predicted_kwh": 73.142
+          },
+          {
+            "date": "2026-08-12",
+            "actual_kwh": 67.643,
+            "predicted_kwh": 73.249
+          },
+          {
+            "date": "2026-08-13",
+            "actual_kwh": 58.397,
+            "predicted_kwh": 73.36
+          },
+          {
+            "date": "2026-08-14",
+            "actual_kwh": 62.33,
+            "predicted_kwh": 73.474
+          },
+          {
+            "date": "2026-08-15",
+            "actual_kwh": 61.721,
+            "predicted_kwh": 73.593
+          },
+          {
+            "date": "2026-08-16",
+            "actual_kwh": 69.254,
+            "predicted_kwh": 73.717
+          },
+          {
+            "date": "2026-08-17",
+            "actual_kwh": 69.217,
+            "predicted_kwh": 73.619
+          },
+          {
+            "date": "2026-08-18",
+            "actual_kwh": 69.514,
+            "predicted_kwh": 73.519
+          },
+          {
+            "date": "2026-08-19",
+            "actual_kwh": 69.696,
+            "predicted_kwh": 73.421
+          },
+          {
+            "date": "2026-08-20",
+            "actual_kwh": 68.405,
+            "predicted_kwh": 73.318
+          },
+          {
+            "date": "2026-08-21",
+            "actual_kwh": 67.312,
+            "predicted_kwh": 73.216
+          },
+          {
+            "date": "2026-08-22",
+            "actual_kwh": 64.903,
+            "predicted_kwh": 73.115
+          },
+          {
+            "date": "2026-08-23",
+            "actual_kwh": 67.765,
+            "predicted_kwh": 73.015
+          },
+          {
+            "date": "2026-08-24",
+            "actual_kwh": 66.7,
+            "predicted_kwh": 72.917
+          },
+          {
+            "date": "2026-08-25",
+            "actual_kwh": 67.832,
+            "predicted_kwh": 72.82
+          },
+          {
+            "date": "2026-08-26",
+            "actual_kwh": 69.098,
+            "predicted_kwh": 72.724
+          },
+          {
+            "date": "2026-08-27",
+            "actual_kwh": 67.865,
+            "predicted_kwh": 72.628
+          },
+          {
+            "date": "2026-08-28",
+            "actual_kwh": 63.166,
+            "predicted_kwh": 72.533
+          },
+          {
+            "date": "2026-08-29",
+            "actual_kwh": 68.713,
+            "predicted_kwh": 72.438
+          },
+          {
+            "date": "2026-08-30",
+            "actual_kwh": 67.097,
+            "predicted_kwh": 72.344
+          },
+          {
+            "date": "2026-08-31",
+            "actual_kwh": 60.944,
+            "predicted_kwh": 72.25
+          }
+        ]
+      },
+      {
+        "start": "2026-09-01",
+        "end": "2026-09-30",
+        "actual_kwh": 1877.374,
+        "predicted_kwh": 1907.607,
+        "difference_kwh": 30.233,
+        "bias_pct": 1.61,
+        "absolute_error_pct": 1.61,
+        "mae_kwh": 3.766,
+        "rmse_kwh": 6.311,
+        "wape_pct": 6.018,
+        "mape_pct": 7.015,
+        "days": 30,
+        "zero_actual_days": 0,
+        "training_days": 31,
+        "training_start": "2026-08-01",
+        "training_end": "2026-08-31",
+        "factor": 0.9079388728545817,
+        "calibration_applied": true,
+        "raw": {
+          "actual_kwh": 1877.374,
+          "predicted_kwh": 1885.056,
+          "difference_kwh": 7.682,
+          "bias_pct": 0.409,
+          "absolute_error_pct": 0.409,
+          "mae_kwh": 3.919,
+          "rmse_kwh": 6.232,
+          "wape_pct": 6.262,
+          "mape_pct": 7.175,
+          "days": 30,
+          "zero_actual_days": 0
+        },
+        "baseline": {
+          "actual_kwh": 1877.374,
+          "predicted_kwh": 2101.03,
+          "difference_kwh": 223.656,
+          "bias_pct": 11.913,
+          "absolute_error_pct": 11.913,
+          "mae_kwh": 7.455,
+          "rmse_kwh": 9.734,
+          "wape_pct": 11.913,
+          "mape_pct": 13.322,
+          "days": 30,
+          "zero_actual_days": 0
+        },
+        "daily": [
+          {
+            "date": "2026-09-01",
+            "actual_kwh": 68.114,
+            "predicted_kwh": 65.515
+          },
+          {
+            "date": "2026-09-02",
+            "actual_kwh": 66.464,
+            "predicted_kwh": 65.432
+          },
+          {
+            "date": "2026-09-03",
+            "actual_kwh": 64.524,
+            "predicted_kwh": 65.35
+          },
+          {
+            "date": "2026-09-04",
+            "actual_kwh": 64.616,
+            "predicted_kwh": 65.269
+          },
+          {
+            "date": "2026-09-05",
+            "actual_kwh": 64.815,
+            "predicted_kwh": 65.189
+          },
+          {
+            "date": "2026-09-06",
+            "actual_kwh": 68.894,
+            "predicted_kwh": 65.11
+          },
+          {
+            "date": "2026-09-07",
+            "actual_kwh": 66.954,
+            "predicted_kwh": 65.031
+          },
+          {
+            "date": "2026-09-08",
+            "actual_kwh": 39.694,
+            "predicted_kwh": 64.954
+          },
+          {
+            "date": "2026-09-09",
+            "actual_kwh": 54.171,
+            "predicted_kwh": 64.878
+          },
+          {
+            "date": "2026-09-10",
+            "actual_kwh": 65.213,
+            "predicted_kwh": 64.802
+          },
+          {
+            "date": "2026-09-11",
+            "actual_kwh": 66.285,
+            "predicted_kwh": 64.727
+          },
+          {
+            "date": "2026-09-12",
+            "actual_kwh": 55.014,
+            "predicted_kwh": 64.653
+          },
+          {
+            "date": "2026-09-13",
+            "actual_kwh": 61.655,
+            "predicted_kwh": 64.579
+          },
+          {
+            "date": "2026-09-14",
+            "actual_kwh": 63.898,
+            "predicted_kwh": 64.506
+          },
+          {
+            "date": "2026-09-15",
+            "actual_kwh": 68.403,
+            "predicted_kwh": 64.434
+          },
+          {
+            "date": "2026-09-16",
+            "actual_kwh": 67.647,
+            "predicted_kwh": 64.261
+          },
+          {
+            "date": "2026-09-17",
+            "actual_kwh": 66.341,
+            "predicted_kwh": 63.986
+          },
+          {
+            "date": "2026-09-18",
+            "actual_kwh": 66.601,
+            "predicted_kwh": 63.706
+          },
+          {
+            "date": "2026-09-19",
+            "actual_kwh": 50.513,
+            "predicted_kwh": 63.423
+          },
+          {
+            "date": "2026-09-20",
+            "actual_kwh": 62.616,
+            "predicted_kwh": 63.136
+          },
+          {
+            "date": "2026-09-21",
+            "actual_kwh": 66.396,
+            "predicted_kwh": 62.845
+          },
+          {
+            "date": "2026-09-22",
+            "actual_kwh": 68.515,
+            "predicted_kwh": 62.55
+          },
+          {
+            "date": "2026-09-23",
+            "actual_kwh": 65.234,
+            "predicted_kwh": 62.251
+          },
+          {
+            "date": "2026-09-24",
+            "actual_kwh": 62.562,
+            "predicted_kwh": 61.947
+          },
+          {
+            "date": "2026-09-25",
+            "actual_kwh": 62.589,
+            "predicted_kwh": 61.64
+          },
+          {
+            "date": "2026-09-26",
+            "actual_kwh": 55.69,
+            "predicted_kwh": 61.328
+          },
+          {
+            "date": "2026-09-27",
+            "actual_kwh": 60.263,
+            "predicted_kwh": 61.013
+          },
+          {
+            "date": "2026-09-28",
+            "actual_kwh": 60.526,
+            "predicted_kwh": 60.693
+          },
+          {
+            "date": "2026-09-29",
+            "actual_kwh": 59.737,
+            "predicted_kwh": 60.365
+          },
+          {
+            "date": "2026-09-30",
+            "actual_kwh": 63.43,
+            "predicted_kwh": 60.036
+          }
+        ],
+        "daily_mean_baseline": {
+          "actual_kwh": 1877.374,
+          "predicted_kwh": 1986.524,
+          "difference_kwh": 109.15,
+          "bias_pct": 5.814,
+          "absolute_error_pct": 5.814,
+          "mae_kwh": 4.453,
+          "rmse_kwh": 7.183,
+          "wape_pct": 7.116,
+          "mape_pct": 8.354,
+          "days": 30,
+          "zero_actual_days": 0
+        }
+      }
+    ],
+    "latest": {
+      "start": "2026-09-01",
+      "end": "2026-09-30",
+      "actual_kwh": 1877.374,
+      "predicted_kwh": 1907.607,
+      "difference_kwh": 30.233,
+      "bias_pct": 1.61,
+      "absolute_error_pct": 1.61,
+      "mae_kwh": 3.766,
+      "rmse_kwh": 6.311,
+      "wape_pct": 6.018,
+      "mape_pct": 7.015,
+      "days": 30,
+      "zero_actual_days": 0,
+      "training_days": 31,
+      "training_start": "2026-08-01",
+      "training_end": "2026-08-31",
+      "factor": 0.9079388728545817,
+      "calibration_applied": true,
+      "raw": {
+        "actual_kwh": 1877.374,
+        "predicted_kwh": 1885.056,
+        "difference_kwh": 7.682,
+        "bias_pct": 0.409,
+        "absolute_error_pct": 0.409,
+        "mae_kwh": 3.919,
+        "rmse_kwh": 6.232,
+        "wape_pct": 6.262,
+        "mape_pct": 7.175,
+        "days": 30,
+        "zero_actual_days": 0
+      },
+      "baseline": {
+        "actual_kwh": 1877.374,
+        "predicted_kwh": 2101.03,
+        "difference_kwh": 223.656,
+        "bias_pct": 11.913,
+        "absolute_error_pct": 11.913,
+        "mae_kwh": 7.455,
+        "rmse_kwh": 9.734,
+        "wape_pct": 11.913,
+        "mape_pct": 13.322,
+        "days": 30,
+        "zero_actual_days": 0
+      },
+      "daily": [
+        {
+          "date": "2026-09-01",
+          "actual_kwh": 68.114,
+          "predicted_kwh": 65.515
+        },
+        {
+          "date": "2026-09-02",
+          "actual_kwh": 66.464,
+          "predicted_kwh": 65.432
+        },
+        {
+          "date": "2026-09-03",
+          "actual_kwh": 64.524,
+          "predicted_kwh": 65.35
+        },
+        {
+          "date": "2026-09-04",
+          "actual_kwh": 64.616,
+          "predicted_kwh": 65.269
+        },
+        {
+          "date": "2026-09-05",
+          "actual_kwh": 64.815,
+          "predicted_kwh": 65.189
+        },
+        {
+          "date": "2026-09-06",
+          "actual_kwh": 68.894,
+          "predicted_kwh": 65.11
+        },
+        {
+          "date": "2026-09-07",
+          "actual_kwh": 66.954,
+          "predicted_kwh": 65.031
+        },
+        {
+          "date": "2026-09-08",
+          "actual_kwh": 39.694,
+          "predicted_kwh": 64.954
+        },
+        {
+          "date": "2026-09-09",
+          "actual_kwh": 54.171,
+          "predicted_kwh": 64.878
+        },
+        {
+          "date": "2026-09-10",
+          "actual_kwh": 65.213,
+          "predicted_kwh": 64.802
+        },
+        {
+          "date": "2026-09-11",
+          "actual_kwh": 66.285,
+          "predicted_kwh": 64.727
+        },
+        {
+          "date": "2026-09-12",
+          "actual_kwh": 55.014,
+          "predicted_kwh": 64.653
+        },
+        {
+          "date": "2026-09-13",
+          "actual_kwh": 61.655,
+          "predicted_kwh": 64.579
+        },
+        {
+          "date": "2026-09-14",
+          "actual_kwh": 63.898,
+          "predicted_kwh": 64.506
+        },
+        {
+          "date": "2026-09-15",
+          "actual_kwh": 68.403,
+          "predicted_kwh": 64.434
+        },
+        {
+          "date": "2026-09-16",
+          "actual_kwh": 67.647,
+          "predicted_kwh": 64.261
+        },
+        {
+          "date": "2026-09-17",
+          "actual_kwh": 66.341,
+          "predicted_kwh": 63.986
+        },
+        {
+          "date": "2026-09-18",
+          "actual_kwh": 66.601,
+          "predicted_kwh": 63.706
+        },
+        {
+          "date": "2026-09-19",
+          "actual_kwh": 50.513,
+          "predicted_kwh": 63.423
+        },
+        {
+          "date": "2026-09-20",
+          "actual_kwh": 62.616,
+          "predicted_kwh": 63.136
+        },
+        {
+          "date": "2026-09-21",
+          "actual_kwh": 66.396,
+          "predicted_kwh": 62.845
+        },
+        {
+          "date": "2026-09-22",
+          "actual_kwh": 68.515,
+          "predicted_kwh": 62.55
+        },
+        {
+          "date": "2026-09-23",
+          "actual_kwh": 65.234,
+          "predicted_kwh": 62.251
+        },
+        {
+          "date": "2026-09-24",
+          "actual_kwh": 62.562,
+          "predicted_kwh": 61.947
+        },
+        {
+          "date": "2026-09-25",
+          "actual_kwh": 62.589,
+          "predicted_kwh": 61.64
+        },
+        {
+          "date": "2026-09-26",
+          "actual_kwh": 55.69,
+          "predicted_kwh": 61.328
+        },
+        {
+          "date": "2026-09-27",
+          "actual_kwh": 60.263,
+          "predicted_kwh": 61.013
+        },
+        {
+          "date": "2026-09-28",
+          "actual_kwh": 60.526,
+          "predicted_kwh": 60.693
+        },
+        {
+          "date": "2026-09-29",
+          "actual_kwh": 59.737,
+          "predicted_kwh": 60.365
+        },
+        {
+          "date": "2026-09-30",
+          "actual_kwh": 63.43,
+          "predicted_kwh": 60.036
+        }
+      ],
+      "daily_mean_baseline": {
+        "actual_kwh": 1877.374,
+        "predicted_kwh": 1986.524,
+        "difference_kwh": 109.15,
+        "bias_pct": 5.814,
+        "absolute_error_pct": 5.814,
+        "mae_kwh": 4.453,
+        "rmse_kwh": 7.183,
+        "wape_pct": 7.116,
+        "mape_pct": 8.354,
+        "days": 30,
+        "zero_actual_days": 0
+      }
+    },
+    "reason": null,
+    "fit_checks": [
+      {
+        "period": "2025",
+        "start": "2025-01-01",
+        "end": "2025-12-31",
+        "actual_kwh": 20637,
+        "raw_kwh": 19103.678,
+        "fitted_kwh": 20637,
+        "role": "calibration"
+      },
+      {
+        "period": "Azar 1404",
+        "start": "2025-11-22",
+        "end": "2025-12-21",
+        "actual_kwh": 892.209,
+        "raw_kwh": 1067.17,
+        "fitted_kwh": 892.209,
+        "role": "calibration_subset"
+      }
+    ],
+    "history_source": "bundled_pilot_reference",
+    "issued_forecasts": [
+      {
+        "id": 2,
+        "issued_at": "2026-10-31T16:32:40.469059+03:30",
+        "start": "2026-11-22",
+        "end": "2026-12-21",
+        "covered_days": 0,
+        "expected_days": 30,
+        "status": "pending",
+        "score": null
+      }
+    ]
+  },
+  "uncalibrated_kwh": 1065.741,
+  "annual": {
+    "annual_kwh": 20642.784,
+    "recent_bias_annual_kwh": 18599.307,
+    "year": 1405,
+    "specific_yield_kwh_kwp": 1810.8,
+    "tehran_reference_range": [
+      19380,
+      21090
+    ]
+  },
+  "model": {
+    "id": "aggregate_site_poa_v4",
+    "capacity_dc_kw": 11.4,
+    "latitude": 35.756256,
+    "longitude": 51.431395,
+    "assumptions": [
+      "One representative tilt and direction are used for the whole site.",
+      "Hourly irradiation shape is estimated from daily totals, not measured hourly weather.",
+      "Temperature, shading and soiling are represented only by the aggregate loss factor.",
+      "Mixed panel models use total DC nameplate capacity; no per-panel or bifacial rear-gain model.",
+      "The site-wide performance factor includes inverter conversion and other losses; no per-inverter model is assumed.",
+      "Pilot seasonal profile fitted to 2025 annual total and its Azar subset; not independent accuracy evidence."
+    ]
+  },
+  "weather_status": {
+    "source": "outside_horizon"
+  },
+  "climate_source": {
+    "source": "cache",
+    "fetched_at": 1793444591.2282662,
+    "stale": false
+  },
+  "impact": {
+    "carbon_saved_kg": 529.9,
+    "carbon_saved_ton": 0.53,
+    "carbon_tokens": 52.99,
+    "token_symbol": "VCT",
+    "ev_km": 4460,
+    "gasoline_car_km": 3580,
+    "trees_equivalent": 25.2,
+    "homes_powered": 2.7
+  },
+  "revenue": 20070250,
+  "tariff": 25000,
+  "plant": {
+    "name": "Tehran rooftop",
+    "capacity_ac": 15,
+    "utm_easting": 539000,
+    "utm_northing": 3957000,
+    "utm_zone": "39S",
+    "tilt": 30,
+    "azimuth": 180,
+    "performance_ratio": 0.8,
+    "panel_type": "Monocrystalline",
+    "mount_type": "Fixed",
+    "capacity_dc": 11.4,
+    "location_mode": "gps",
+    "latitude": 35.756256,
+    "longitude": 51.431395,
+    "location_name": "",
+    "forecast_mode": "history_calibrated",
+    "calibration_profile": "tehran_kaco_11_4"
+  },
+  "data_quality": {
+    "sources": 0,
+    "complete_days": 0,
+    "partial_days": 0
+  }
+}
